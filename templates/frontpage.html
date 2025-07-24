@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripBuddy - Your Eco-Friendly Ride Share</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/frontpage.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/tripbuddy.png') }}" alt="TripBuddy Logo" class="logo-img">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('about') }}" class="nav-link">About</a></li>
+                    <li><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('dashboard') }}" class="nav-btn nav-btn-dashboard">Dashboard</a></li>
+                        <li><a href="{{ url_for('logout') }}" class="nav-btn nav-btn-logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}" class="btn login-btn">Login</a></li>
+                        <li><a href="{{ url_for('register') }}" class="btn signup-btn">Signup</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-banner">
+            <div class="container">
+                <h1 class="hero-title">Your Eco-Friendly Ride, Just a Tap <span class="primary-color-text">Away.</span></h1>
+                <p class="hero-description">Carpool, Save, Connect – Smarter Travel for Everyone.</p>
+               <div class="cta-buttons">
+                <a href="{{ url_for('find_rides') }}" class="btn primary-hero-btn">Find a Ride <i class="fas fa-arrow-right"></i></a>
+                <a href="{{ url_for('post_ride') }}" class="btn secondary-hero-btn">Post a Ride <i class="fas fa-car"></i></a>
+            </div>
+            </div>
+        </section>
+
+       <section class="features-section section-padding">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-route feature-icon"></i>
+                        <h3>1. Offer a Ride</h3>
+                        <p>Providers can easily list their available seats, sharing their journey with others.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-search feature-icon"></i>
+                        <h3>2. Search a Ride</h3>
+                        <p>Renters can quickly find rides matching their route, date, and preferences.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <h3>3. Book Securely</h3>
+                        <p>Confirm your booking with trusted providers through our secure payment system.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-hands-helping feature-icon"></i>
+                        <h3>4. Connect & Travel</h3>
+                        <p>Communicate seamlessly with your carpool partner and enjoy a comfortable ride.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="why-us-section section-padding">
+            <div class="container">
+                <h2>Why Choose TripBuddy?</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <i class="fas fa-leaf benefit-icon"></i>
+                        <h3>Eco-Friendly Travel</h3>
+                        <p>Reduce your carbon footprint by sharing rides and contributing to a greener planet.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-lock benefit-icon"></i>
+                        <h3>Secure & Reliable</h3>
+                        <p>Travel with peace of mind. We verify users and ensure safe connections.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-route benefit-icon"></i>
+                        <h3>Flexible & Convenient</h3>
+                        <p>Find rides that fit your schedule and destination, or offer a ride on your terms.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-wallet benefit-icon"></i>
+                        <h3>Cost-Effective Journeys</h3>
+                        <p>Split fuel costs with fellow travelers, making your trips more affordable.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-users benefit-icon"></i>
+                        <h3>Connect with People</h3>
+                        <p>Meet new people, expand your network, and enjoy social interaction on your travels.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer section-padding">
+        <div class="footer-container container">
+            <div class="footer-links-group">
+                <h4>Quick Links</h4>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="#">How It Works</a>
+                <a href="{{ url_for('about') }}">About Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-contact-group">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
+                <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
+            </div>
+            <div class="footer-social-group">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-newsletter-group">
+                <h4>Subscribe to Our Newsletter</h4>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email" required />
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
+    </footer>
+</body>
+</html>

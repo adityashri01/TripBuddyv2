@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Find Rides - TripBuddy</title>
+</head>
+<body>
+    <h1>Available Rides</h1>
+    <ul>
+        {% for ride in rides %}
+        <li>
+            From: {{ ride.start_location }} — To: {{ ride.end_location }} — 
+            Price: {{ ride.price }} — Seats: {{ ride.seats }}
+            <a href="{{ url_for('book_ride', ride_id=ride.id) }}">Book</a>
+        </li>
+        {% else %}
+        <li>No rides currently available.</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

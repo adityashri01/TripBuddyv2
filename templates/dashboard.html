@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard - TripBuddy</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <p>Welcome, {{ name }}! (Role: {{ role }})</p>
+
+    <nav>
+        <a href="{{ url_for('post_ride') }}">Post a Ride</a> |
+        <a href="{{ url_for('find_rides') }}">Find Rides</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+</body>
+</html>

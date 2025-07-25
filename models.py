@@ -1,19 +1,28 @@
+# models.py (Example - you need to ensure this matches your actual setup)
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
-db = SQLAlchemy()  # uninitialized here, will be initialized in app.py
+db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), nullable=False, unique=True)
-    password = db.Column(db.String(150), nullable=False)
-    role = db.Column(db.String(20), nullable=False)  # "Renter" or "Provider"
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False) # ADD THIS LINE
+    password = db.Column(db.String(120), nullable=False)
+    role = db.Column(db.String(20), nullable=False) # e.g., 'Renter', 'Provider'
+    rides_created = db.relationship('Ride', backref='creator', lazy=True)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
 
 class Ride(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    start_location = db.Column(db.String(150), nullable=False)
-    end_location = db.Column(db.String(150), nullable=False)
+    start_location = db.Column(db.String(100), nullable=False)
+    end_location = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     seats = db.Column(db.Integer, nullable=False)
-    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     is_booked = db.Column(db.Boolean, default=False)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Ride {self.start_location} to {self.end_location}>'

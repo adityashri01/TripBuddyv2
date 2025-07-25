@@ -1,33 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login / Signup - TripBuddy</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup | TripBuddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/frontpage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_signup.css') }}">
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST" action="{{ url_for('login') }}">
-        <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
-        <button type="submit">Login</button>
-    </form>
+ 
 
-    <hr>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-toggle" id="auth-toggle-container"> {# Added ID for JS access #}
+                <button id="login-toggle" class="active">Login</button>
+                <button id="signup-toggle">Sign Up</button>
+                <div class="auth-toggle-indicator"></div> {# Dedicated indicator div #}
+            </div>
 
-    <h1>Register</h1>
-    <form method="POST" action="{{ url_for('register') }}">
-        <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
-        <label>Role:</label><br>
-        <select name="role" required>
-            <option value="Renter">Renter</option>
-            <option value="Provider">Provider</option>
-        </select><br><br>
-        <button type="submit">Register</button>
-    </form>
-    <a href="{{ url_for('home') }}">Back to Home</a>
+            <form id="login-form" class="auth-form active" method="POST" action="{{ url_for('login') }}">
+                <h2>Login to TripBuddy</h2>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i> {# Changed icon to envelope #}
+                    <input type="email" name="email" placeholder="Your Email Address" required> {# Changed name to 'email' and placeholder #}
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn primary-btn">Log In</button>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </form>
+
+            <form id="signup-form" class="auth-form" method="POST" action="{{ url_for('register') }}">
+                <h2>Join TripBuddy Today!</h2>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" placeholder="Choose a Username" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" placeholder="Your Email Address" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Create a Strong Password" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i> {# Re-using lock icon for confirm password #}
+                    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user-tag"></i> <select name="role" required>
+                        <option value="">Select Your Role</option>
+                        <option value="Renter">Renter (Looking for rides)</option>
+                        <option value="Provider">Provider (Offering rides)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn primary-btn">Create Account</button>
+            </form>
+
+            <div class="social-login">
+                <p>Or continue with:</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Google"><i class="fab fa-google"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginToggle = document.getElementById('login-toggle');
+        const signupToggle = document.getElementById('signup-toggle');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const authToggleContainer = document.getElementById('auth-toggle-container'); // Get the toggle container
+
+        // Function to show login form and hide signup form
+        function showLoginForm() {
+            loginToggle.classList.add('active');
+            signupToggle.classList.remove('active');
+            loginForm.classList.add('active');
+            signupForm.classList.remove('active');
+            authToggleContainer.classList.remove('signup-active'); // Remove class for login
+            // Update URL without reloading to reflect current form state (optional)
+            history.pushState(null, '', '{{ url_for("login") }}'); 
+        }
+
+        // Function to show signup form and hide login form
+        function showSignupForm() {
+            signupToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+            signupForm.classList.add('active');
+            loginForm.classList.remove('active');
+            authToggleContainer.classList.add('signup-active'); // Add class for signup
+            // Update URL without reloading to reflect current form state (optional)
+            history.pushState(null, '', '{{ url_for("register") }}');
+        }
+
+        // Event listeners for toggle buttons
+        loginToggle.addEventListener('click', showLoginForm);
+        signupToggle.addEventListener('click', showSignupForm);
+
+        // Determine which form to show based on the initial URL or a hash
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.location.pathname.includes('/register')) {
+                showSignupForm();
+            } else {
+                showLoginForm(); // Default to login form
+            }
+        });
+    </script>
 </body>
 </html>

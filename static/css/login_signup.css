@@ -1,0 +1,426 @@
+/* static/css/login_signup.css */
+
+/* --- Root Variables (These should be consistent across your project) --- */
+:root {
+    --primary-color: #2979FF; /* Strong Blue */
+    --secondary-color: #FFD600; /* Vibrant Yellow */
+    --dark-blue-hover: #1976D2; /* Slightly darker blue */
+    --light-blue: #61A3FF; /* Lighter blue for gradients */
+    --text-dark: #333333;
+    --text-light: #f4f4f4;
+    --background-light: #ffffff;
+    --bg-dark: #232a36;
+    --shadow-light: rgba(0, 0, 0, 0.08);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+    --poppins: 'Poppins', sans-serif;
+    --roboto: 'Roboto', sans-serif;
+}
+
+body {
+    font-family: var(--roboto);
+    line-height: 1.6;
+    color: var(--text-dark);
+    /* Enhanced background: more vibrant gradient */
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--light-blue) 40%, #f0f2f5 80%, #e0e2e5 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    /* REMOVED: overflow: hidden; -> Allows main page scrolling if necessary, though card will scroll */
+}
+
+/* Optional: Smooth scrolling for the entire document */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar styling for Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-blue-hover);
+}
+
+/* Scrollbar styling for Firefox */
+* {
+    scrollbar-width: thin; /* "auto" or "none" */
+    scrollbar-color: var(--primary-color) #f1f1f1; /* thumb and track color */
+}
+
+
+/* Flash Messages Styling */
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flash-message {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-family: var(--poppins);
+    color: var(--text-light);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: slideInFromTop 0.5s ease-out;
+}
+
+.flash-success {
+    background-color: #4CAF50; /* Green */
+    border: 1px solid #388E3C;
+}
+
+.flash-danger {
+    background-color: #F44336; /* Red */
+    border: 1px solid #D32F2F;
+}
+
+/* Auth Container */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    perspective: 1000px; /* For 3D transformations */
+}
+
+/* Auth Card - Main container for forms */
+.auth-card {
+    background-color: var(--background-light);
+    border-radius: 15px; /* Slightly more rounded */
+    box-shadow: 0 15px 30px var(--shadow-medium); /* Deeper, softer shadow */
+    padding: 40px;
+    width: 100%;
+    max-width: 480px; /* Slightly wider */
+    text-align: center;
+    position: relative;
+    overflow: hidden; /* Keep this to hide content that goes outside borders, forms will transition in/out */
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth transform */
+    backdrop-filter: blur(5px); /* Subtle frosted glass effect */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+
+    /* ADDED: Max height and scrollbar for the card content */
+    max-height: 90vh; /* Card will take up to 90% of viewport height */
+    overflow-y: auto; /* Add vertical scrollbar if content overflows */
+    padding-right: 20px; /* Adjust padding to account for scrollbar width */
+}
+
+
+/* Auth Toggle - Login/Signup buttons */
+.auth-toggle {
+    display: flex;
+    margin-bottom: 30px;
+    border-radius: 8px; /* More rounded toggle */
+    overflow: hidden;
+    background-color: #e0e0e0;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.15); /* More pronounced inner shadow */
+    position: relative; /* For active indicator */
+}
+
+/* Dedicated indicator div */
+.auth-toggle-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50%; /* Half the width of the parent toggle */
+    height: 4px;
+    background-color: var(--secondary-color); /* Yellow indicator */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+    z-index: 2; /* Below buttons, above background */
+}
+
+/* Move indicator when 'signup-active' class is added to parent */
+.auth-toggle.signup-active .auth-toggle-indicator {
+    transform: translateX(100%); /* Move to the right for signup */
+}
+
+.auth-toggle button {
+    flex: 1;
+    padding: 14px 0; /* More padding */
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.15em; /* Slightly larger font */
+    font-weight: 600;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    outline: none;
+    position: relative;
+    z-index: 3; /* Ensure buttons are above indicator */
+}
+
+.auth-toggle button.active {
+    color: var(--primary-color); /* Active text color */
+    box-shadow: none; /* Remove individual button shadow, indicator handles visual */
+}
+
+/* Auth Forms */
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeInScale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; /* More complex animation */
+}
+
+.auth-form.active {
+    display: flex;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.auth-form h2 {
+    font-family: var(--poppins);
+    color: var(--primary-color);
+    margin-bottom: 28px; /* More space */
+    font-size: 2.3em; /* Larger heading */
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Input Group with Icons - OPTION 2: ICONS OUTSIDE */
+.input-group {
+    display: flex; /* Use flexbox to align icon and input side-by-side */
+    align-items: center; /* Vertically align items */
+    width: 100%;
+    margin-bottom: 18px;
+    gap: 10px; /* Space between icon and input */
+}
+
+.input-group i {
+    position: static; /* Remove absolute positioning */
+    transform: none; /* Remove transform */
+    color: var(--primary-color); /* Make icon more prominent */
+    font-size: 1.5em; /* Larger icon for outside placement */
+    width: 30px; /* Fixed width for icon to ensure consistent alignment */
+    text-align: center; /* Center the icon within its space */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.input-group input,
+.input-group select {
+    flex-grow: 1; /* Allow input to take remaining space */
+    width: auto; /* Let flexbox handle width */
+    padding: 14px 15px; /* Standard padding, no extra left for icon inside */
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.05em;
+    font-family: var(--roboto);
+    color: var(--text-dark);
+    background-color: #fcfcfc;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(41, 121, 255, 0.25);
+    background-color: var(--background-light);
+    outline: none;
+}
+
+.input-group input::placeholder {
+    color: #999;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 15px 30px; /* More padding for a bolder button */
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700; /* Bolder text */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    width: 100%;
+    border: none;
+    font-family: var(--poppins);
+    font-size: 1.15em;
+    margin-top: 15px; /* More space above button */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2); /* Deeper shadow */
+    letter-spacing: 0.5px; /* Slightly spaced letters */
+}
+
+.primary-btn {
+    background: linear-gradient(45deg, var(--primary-color), var(--light-blue)); /* Gradient button */
+    color: var(--text-light);
+}
+
+.primary-btn:hover {
+    background: linear-gradient(45deg, var(--dark-blue-hover), var(--primary-color)); /* Darker gradient on hover */
+    transform: translateY(-3px) scale(1.01); /* Lift and slightly enlarge */
+    box-shadow: 0 12px 20px rgba(0,0,0,0.3); /* Even deeper shadow on hover */
+}
+
+.forgot-password {
+    display: block;
+    margin-top: 20px; /* More space */
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.98em;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: var(--dark-blue-hover);
+    text-decoration: underline;
+}
+
+/* Social Login */
+.social-login {
+    margin-top: 35px; /* More space */
+    padding-top: 25px; /* More padding */
+    border-top: 1px solid #eee;
+}
+
+.social-login p {
+    color: #777; /* Slightly lighter text */
+    margin-bottom: 18px;
+    font-size: 0.95em;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* More space between icons */
+}
+
+.social-icons a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px; /* Larger icons */
+    height: 50px;
+    border-radius: 50%;
+    background-color: #f0f2f5;
+    color: var(--primary-color);
+    font-size: 1.6em; /* Larger icon size */
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1); /* Subtle shadow for icons */
+}
+
+.social-icons a:hover {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    transform: translateY(-4px) rotate(5deg); /* Lift and subtle rotate */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25); /* Deeper shadow on hover */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    body {
+        background: var(--primary-color); /* Solid blue background on smaller screens */
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--light-blue) 100%); /* Still a gradient, but solid blue area */
+    }
+
+    .auth-card {
+        margin: 20px;
+        padding: 30px 20px;
+        max-width: 90%;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px var(--shadow-medium);
+    }
+
+    .auth-form h2 {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .auth-toggle button {
+        font-size: 1em;
+        padding: 12px 0;
+    }
+
+    /* For icons outside: Adjust .input-group's gap and icon size for mobile */
+    .input-group {
+        gap: 8px; /* Slightly less gap on smaller screens */
+    }
+    .input-group i {
+        font-size: 1.3em;
+        width: 25px;
+    }
+    .input-group input,
+    .input-group select {
+        padding: 12px 15px; /* No extra padding for icon inside */
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 1.05em;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .social-icons a {
+        width: 45px;
+        height: 45px;
+        font-size: 1.4em;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 25px 15px;
+        border-radius: 10px;
+    }
+
+    .auth-form h2 {
+        font-size: 1.7em;
+        margin-bottom: 18px;
+    }
+
+    .auth-toggle button {
+        font-size: 0.95em;
+        padding: 10px 0;
+    }
+
+    .social-icons a {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+    }
+
+    .flash-message {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+}
+
+/* Animations for flash messages */
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-100%) translateX(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) translateX(-50%);
+        opacity: 1;
+    }
+}

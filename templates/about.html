@@ -7,62 +7,58 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
 
     <style>
-        /* --- Root Variables (from frontpage.css) --- */
-        :root {
-            --primary-color: #2979FF;
-            --secondary-color: #FFD600;
-            --dark-blue-hover: #1976D2;
-            --dark-yellow-hover: #FFC107;
-            --text-dark: #333333;
-            --text-light: #f4f4f4;
-            --background-light: #ffffff;
-            --bg-dark: #232a36;
-            --shadow-light: rgba(0, 0, 0, 0.05);
-            --shadow-medium: rgba(0, 0, 0, 0.15);
-            --poppins: 'Poppins', sans-serif;
-            --roboto: 'Roboto', sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-            /* Specific for Contact Form Button */
-            --gradient-start: #00c6a7;
-            --gradient-end: #00a7d1;
-            --gradient-hover-start: #00a7d1;
-            --gradient-hover-end: #00c6a7;
-        }
+:root {
+    --primary-color: #2979FF; /* Blue from the image */
+    --secondary-color: #FFD600; /* Yellow from the image */
+    --dark-blue-hover: #1976D2; /* Slightly darker blue for hover */
+    --dark-yellow-hover: #FFC107; /* Slightly darker yellow for hover */
+    --text-dark: #333333;
+    --text-light: #f4f4f4;
+    --background-light: #ffffff;
+    --bg-dark: #232a36; /* Dark grey from the image's footer */
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --poppins: 'Poppins', sans-serif;
+    --roboto: 'Roboto', sans-serif;
+}
 
-        /* --- Global Styles & Resets (from frontpage.css) --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+body {
+    font-family: var(--roboto);
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: #F0F2F5; /* Light grey background as seen in the image */
+    overflow-x: hidden;
+}
 
-        body {
-            font-family: var(--roboto);
-            line-height: 1.6;
-            color: var(--text-dark);
-            background-color: #F0F2F5; /* Light grey background */
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the container */
+}
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+h1, h2, h3 {
+    font-family: var(--poppins);
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
 
-        h1, h2, h3, h4 {
-            font-family: var(--poppins);
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
+/* --- General Section Padding --- */
+.section-padding {
+    padding: 80px 0;
+}
 
-        /* --- Header Styling (extracted directly from frontpage.css) --- */
-        .main-header {
+
+/* --- Header Styling --- */
+.main-header {
     background: #f8faff;
     padding: 10px 0;
     box-shadow: 0 2px 10px var(--shadow-light);
@@ -176,7 +172,297 @@
     display: none;
 }
 
-        /* --- Footer Styling (extracted directly from frontpage.css) --- */
+/* main section*/
+
+.about-hero {
+            background: linear-gradient(to right, var(--primary-color-dark), var(--primary-color));
+            color: var(--text-white);
+            padding: 100px 0;
+            text-align: center;
+        }
+        .about-hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+        .about-hero p {
+            font-size: 1.3em;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .section-padding { /* Already defined in frontpage.css or dashboard.css */
+            padding: 80px 0;
+        }
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        .about-content-text, .about-content-video { /* Changed from .about-content-image to .about-content-video */
+            flex: 1;
+            min-width: 300px;
+        }
+        .about-content-video video { /* Style for video element */
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: auto; /* Ensure video scales proportionally */
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .team-member {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            transition: transform 0.2s ease;
+        }
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+        .team-member img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid var(--primary-color);
+        }
+        .team-member h3 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        .team-member p {
+            color: var(--text-medium);
+            font-size: 0.95em;
+        }
+        .call-to-action-section {
+            background-color: var(--background-light);
+            text-align: center;
+            padding: 80px 0;
+            margin-top: 50px;
+        }
+        .call-to-action-section h2 {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+        .call-to-action-section .cta-buttons a {
+            margin: 0 15px;
+        }
+
+        /* Testimonials Section Styles */
+        .testimonials-section {
+            background-color: #f7f9fa; /* Light background for section */
+            padding: 60px 0;
+            text-align: center;
+        }
+        .testimonials-section h2 {
+            font-size: 2.2em;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+        .testimonials-carousel-container {
+            overflow: hidden; /* Hide overflow for scrolling content */
+            position: relative;
+            padding: 20px 0; /* Padding for shadow/spacing */
+            /* Add horizontal padding to make sure cards start/end off-screen */
+        }
+        .testimonials-carousel {
+            display: flex;
+            /* Using a large width and animation for continuous scroll */
+            width: max-content; /* Allow content to dictate width */
+            animation: scroll-testimonials 30s linear infinite; /* Adjust time for speed */
+        }
+
+        .testimonial-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin: 0 15px; /* Spacing between cards */
+            min-width: 320px; /* Minimum width of each card */
+            max-width: 320px; /* Maximum width of each card */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex-shrink: 0; /* Prevent cards from shrinking */
+        }
+
+        .testimonial-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #007bff; /* Accent border for profile pic */
+        }
+
+        .testimonial-card h3 {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .testimonial-card .stars {
+            color: #FFD700; /* Gold color for stars */
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .testimonial-card p {
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Keyframes for continuous horizontal scrolling */
+        @keyframes scroll-testimonials {
+            0% { transform: translateX(0); }
+            /* Calculate 100% to scroll exactly one set of testimonials plus gaps */
+            /* Assuming 4 cards, each 320px + 15px margin-right (total 335px width per card for calculation) */
+            /* Total width of one set of 4 cards + 3 gaps = (320*4) + (15*3) = 1280 + 45 = 1325px */
+            /* If duplicating, we scroll by the width of the original set. */
+            /* To ensure seamless loop, the animation should move the width of all original cards plus their margins. */
+            /* Here, since we have 8 cards (4 original + 4 duplicate), the animation scrolls exactly half the total carousel width */
+            100% { transform: translateX(calc(-50% - 30px)); } /* Scrolls half the carousel's content plus one full gap */
+        }
+
+
+        /* Stop animation on hover */
+        .testimonials-carousel-container:hover .testimonials-carousel {
+            animation-play-state: paused;
+        }
+
+        /* Adjust for smaller screens */
+        @media (max-width: 768px) {
+            .testimonials-carousel-container {
+                padding: 10px 0;
+            }
+            .testimonial-card {
+                min-width: 280px;
+                max-width: 280px;
+                margin: 0 10px;
+            }
+            @keyframes scroll-testimonials {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(calc(-50% - 20px)); } /* Adjust for smaller gap */
+            }
+        }
+
+/* --- New CTA Section Styles (Updated for icons) --- */
+.cta-section {
+    background: #2979FF;
+    color: var(--text-light);
+    padding: 30px 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.cta-section h3 {
+    color: var(--text-light);
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Base style for CTA buttons to include icon spacing */
+.cta-button-primary,
+.cta-button-secondary {
+    display: inline-flex; /* Use flexbox for icon and text alignment */
+    align-items: center; /* Vertically center icon and text */
+    justify-content: center; /* Horizontally center content */
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button-primary i,
+.cta-button-secondary i {
+    margin-right: 8px; /* Space between icon and text */
+    font-size: 1em; /* Ensure icon size is consistent with text */
+}
+
+/* Find a Ride button style (like .nav-btn) */
+.cta-button-primary {
+    background-color: var(--text-light);
+    color: var(--primary-color);
+}
+
+.cta-button-primary:hover {
+    background-color: #e0e0e0;
+    color: var(--dark-blue-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Post a Ride button style (like .nav-btn-signup) */
+.cta-button-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+}
+
+.cta-button-secondary:hover {
+    background-color: var(--dark-yellow-hover);
+    color: var(--text-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Media Queries for CTA section responsiveness */
+@media (max-width: 900px) {
+    .cta-section h3 {
+        font-size: 1.6em;
+    }
+    .cta-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .cta-button-primary,
+    .cta-button-secondary {
+        width: 80%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cta-section {
+        padding: 25px 15px;
+    }
+    .cta-section h3 {
+        font-size: 1.4em;
+    }
+    .cta-button-primary,
+    .cta-button-secondary {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+}
+
+
+        /* --- Footer Styling --- */
 .main-footer {
     background: var(--bg-dark);
     color: #B0BEC5;
@@ -373,134 +659,9 @@
     .footer-newsletter-group input { max-width: 90%; }
 }
 
-        /* --- About Page Specific Styles (from your provided about.html) --- */
-        main {
-            flex-grow: 1;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
 
-        .about-section-wrapper {
-            max-width: 960px;
-            width: 100%;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            padding: 40px;
-            box-sizing: border-box;
-            text-align: center;
-        }
 
-        .about-section-wrapper h2 {
-            font-size: 2.5em;
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
 
-        .about-section-wrapper p {
-            font-size: 1.1em;
-            line-height: 1.8;
-            color: #555;
-            margin-bottom: 20px;
-            text-align: left; /* Keep paragraphs left-aligned */
-        }
-
-        .about-section-wrapper .highlight {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .about-section-wrapper ul {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 20px;
-            text-align: left;
-            display: inline-block; /* Helps center the list if needed by parent */
-        }
-
-        .about-section-wrapper ul li {
-            margin-bottom: 10px;
-            font-size: 1em;
-            color: #555;
-        }
-
-        .about-section-wrapper ul li i {
-            color: var(--secondary-color);
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
-        .about-image {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* --- Media Queries (Combined from frontpage.css and general layout responsiveness) --- */
-        @media (max-width: 900px) {
-            .main-header .container.nav-flex {
-                flex-direction: column;
-                gap: 15px;
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-            .main-nav ul {
-                gap: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            main {
-                padding: 20px;
-                align-items: center;
-            }
-            .about-section-wrapper {
-                padding: 20px;
-            }
-            .about-section-wrapper h2 {
-                font-size: 2em;
-            }
-            .about-section-wrapper p {
-                font-size: 1em;
-            }
-
-            .footer-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 30px;
-            }
-            .footer-links-group,
-            .footer-contact-group,
-            .footer-social,
-            .footer-newsletter {
-                text-align: center;
-                min-width: unset;
-                width: 100%;
-                max-width: 300px;
-            }
-            .footer-social {
-                justify-content: center;
-            }
-            .footer-newsletter .newsletter-form {
-                align-items: center;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .main-header .container.nav-flex { padding: 10px; }
-            .logo h1 { font-size: 1.8em; }
-            .main-nav ul { gap: 10px; }
-            .main-nav ul li a { padding: 6px 12px; font-size: 0.9em; }
-
-            .about-section-wrapper h2 { font-size: 1.8em; }
-            .about-section-wrapper p { font-size: 0.95em; }
-        }
     </style>
 </head>
 <body>
@@ -527,19 +688,130 @@
     </header>
 
     <main>
-        <div class="about-section-wrapper">
-            <h2>About TripBuddy</h2>
-            <p>Welcome to <span class="highlight">TripBuddy</span>, your ultimate solution for hassle-free ride-sharing. We are a dedicated team passionate about connecting passengers with drivers, making every journey affordable, convenient, and safe. Our platform aims to revolutionize the way people commute by fostering a community of trust and reliability.</p>
-            <p>At TripBuddy, we understand the challenges of daily commuting and long-distance travel. That's why we've built a user-friendly application that allows you to:</p>
-            <ul>
-                <li><i class="fas fa-check-circle"></i> Easily find available rides going your way.</li>
-                <li><i class="fas fa-check-circle"></i> Post your own rides to share costs and reduce your carbon footprint.</li>
-                <li><i class="fas fa-check-circle"></i> Connect with verified drivers and passengers.</li>
-                <li><i class="fas fa-check-circle"></i> Enjoy secure and transparent transactions.</li>
-            </ul>
-            <p>Our commitment extends beyond just connecting people; we are committed to providing an exceptional experience, prioritizing safety, and contributing to a sustainable future by promoting carpooling and reducing traffic congestion. Join the TripBuddy community today and experience the future of travel!</p>
-            <img src="{{ url_for('static', filename='images/about-us-hero.jpg') }}" alt="About Us" class="about-image">
-        </div>
+        <section class="section-padding">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-content-text">
+                        <h2>Our Mission & Story</h2>
+                        <p>Founded in 2025, TripBuddy was born from a simple idea: to make daily commutes and long-distance travel more sustainable and affordable for everyone. We saw the potential in shared journeys – not just to save money and the planet, but also to foster a sense of community among travelers.</p>
+                        <p>Our mission is to seamlessly connect riders and drivers, providing a reliable, safe, and eco-conscious platform that transforms the way people travel. We believe that by carpooling, we can collectively reduce traffic congestion, lower carbon emissions, and create a more connected world.</p>
+                    </div>
+                    <div class="about-content-video">
+                        <video controls autoplay loop muted>
+                            <source src="{{ url_for('static', filename='videos/video1.mp4') }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div class="about-content reverse-order">
+                    <div class="about-content-video">
+                        <video controls autoplay loop muted>
+                            <source src="{{ url_for('static', filename='videos/video2.mp4') }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="about-content-text">
+                        <h2>Our Impact & Values</h2>
+                        <p>Since our inception, TripBuddy has facilitated thousands of shared rides, leading to significant reductions in individual travel costs and a measurable decrease in CO2 emissions. We are committed to:</p>
+                        <ul>
+                            <li><i class="fas fa-leaf"></i> **Sustainability:** Championing eco-friendly travel choices.</li>
+                            <li><i class="fas fa-users"></i> **Community:** Building a network of trusted and friendly travelers.</li>
+                            <li><i class="fas fa-shield-alt"></i> **Safety:** Ensuring a secure platform through user verification and robust features.</li>
+                            <li><i class="fas fa-wallet"></i> **Affordability:** Making travel accessible and economical.</li>
+                        </ul>
+                        <p>Join us in making a difference, one ride at a time!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials-section">
+            <div class="container">
+                <h2>What Our Users Say</h2>
+                <div class="testimonials-carousel-container">
+                    <div class="testimonials-carousel">
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/priya.png') }}" alt="Priya Sharma Profile Picture">
+                            <h3>Priya Sharma</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>"TripBuddy has revolutionized my daily commute! It's so easy to find rides, and I've met some amazing people. Highly recommend for safe and affordable travel."</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/rahul.png') }}" alt="Rahul Singh Profile Picture">
+                            <h3>Rahul Singh</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p>"Fantastic platform for sharing rides. I save so much on fuel, and it's great to contribute to less traffic. The app is intuitive and reliable."</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/anaya.png') }}" alt="Ananya Gupta Profile Picture">
+                            <h3>Ananya Gupta</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>"A wonderful initiative for eco-friendly travel. Booking is seamless, and the communication features make coordinating rides a breeze. Love it!"</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/sameer.png') }}" alt="Sameer Khan Profile Picture">
+                            <h3>Sameer Khan</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>"I've been using TripBuddy for my weekend trips, and it's been a game-changer. Reliable drivers, friendly passengers, and great savings. 5 stars!"</p>
+                        </div>
+
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/priya.png') }}" alt="Priya Sharma Profile Picture">
+                            <h3>Priya Sharma</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>"TripBuddy has revolutionized my daily commute! It's so easy to find rides, and I've met some amazing people. Highly recommend for safe and affordable travel."</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/rahul.png') }}" alt="Rahul Singh Profile Picture">
+                            <h3>Rahul Singh</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p>"Fantastic platform for sharing rides. I save so much on fuel, and it's great to contribute to less traffic. The app is intuitive and reliable."</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/anaya.png') }}" alt="Ananya Gupta Profile Picture">
+                            <h3>Ananya Gupta</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>"A wonderful initiative for eco-friendly travel. Booking is seamless, and the communication features make coordinating rides a breeze. Love it!"</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <img src="{{ url_for('static', filename='images/sameer.png') }}" alt="Sameer Khan Profile Picture">
+                            <h3>Sameer Khan</h3>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>"I've been using TripBuddy for my weekend trips, and it's been a game-changer. Reliable drivers, friendly passengers, and great savings. 5 stars!"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding call-to-action-section">
+            <div class="container">
+                <h2>Ready to Start Your Journey?</h2>
+                <div class="cta-buttons">
+                    <div class="cta-buttons">
+                        <a href="{{ url_for('find_rides') }}" class="cta-button-primary"><i class="fas fa-search"></i> Find a Ride</a>
+                        <a href="{{ url_for('post_ride') }}" class="cta-button-secondary"><i class="fas fa-plus-circle"></i> Post a Ride</a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
 <footer class="main-footer section-padding">
@@ -547,7 +819,7 @@
             <div class="footer-links-group">
                 <h4>Quick Links</h4>
                 <a href="{{ url_for('home') }}">Home</a>
-                <a href="#">How It Works</a>
+                <a href="{{ url_for('home') }}#how-it-works">How It Works</a>
                 <a href="{{ url_for('about') }}">About Us</a>
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>

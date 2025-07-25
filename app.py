@@ -42,13 +42,13 @@ def home():
 
 @app.route('/about')
 def about():
-    # This is a placeholder for your About Us page content
-    return "<h1>About Us Page</h1><p>Information about TripBuddy will go here.</p>"
+    return render_template('about.html')
+
 
 @app.route('/contact')
 def contact():
-    # This is a placeholder for your Contact Us page content
-    return "<h1>Contact Us Page</h1><p>Our contact information will go here.</p>"
+    # This route now renders the contact.html template
+    return render_template('contact.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

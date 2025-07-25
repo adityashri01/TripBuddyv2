@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About Us | TripBuddy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- Root Variables (from frontpage.css) --- */
+        :root {
+            --primary-color: #2979FF;
+            --secondary-color: #FFD600;
+            --dark-blue-hover: #1976D2;
+            --dark-yellow-hover: #FFC107;
+            --text-dark: #333333;
+            --text-light: #f4f4f4;
+            --background-light: #ffffff;
+            --bg-dark: #232a36;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --poppins: 'Poppins', sans-serif;
+            --roboto: 'Roboto', sans-serif;
+
+            /* Specific for Contact Form Button */
+            --gradient-start: #00c6a7;
+            --gradient-end: #00a7d1;
+            --gradient-hover-start: #00a7d1;
+            --gradient-hover-end: #00c6a7;
+        }
+
+        /* --- Global Styles & Resets (from frontpage.css) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--roboto);
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #F0F2F5; /* Light grey background */
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--poppins);
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        /* --- Header Styling (extracted directly from frontpage.css) --- */
+        .main-header {
+    background: #f8faff;
+    padding: 10px 0;
+    box-shadow: 0 2px 10px var(--shadow-light);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.logo img {
+    height: 80px;
+    width: auto;
+    display: block;
+}
+
+/* --- Navigation Styling --- */
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+/* Styling for "About" and "Contact" links */
+.main-nav ul li .nav-link {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    padding: 5px 0;
+    font-size: 1.05em;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.main-nav ul li .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    left: 0;
+    bottom: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+.main-nav ul li .nav-link:hover {
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.main-nav ul li .nav-link:hover::after {
+    width: 100%;
+}
+
+/* --- Header Button Styling (Login/Signup) --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    border: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Login Button */
+.login-btn {
+    background-color: var(--background-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.login-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Signup Button */
+.signup-btn {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.signup-btn:hover {
+    background-color: var(--dark-blue-hover);
+    border-color: var(--dark-blue-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btn::after {
+    display: none;
+}
+
+        /* --- Footer Styling (extracted directly from frontpage.css) --- */
+.main-footer {
+    background: var(--bg-dark);
+    color: #B0BEC5;
+    text-align: center;
+    box-shadow: 0 -2px 10px var(--shadow-light);
+    padding-top: 50px;
+}
+
+.main-footer .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    padding: 0 15px;
+}
+
+.footer-links-group,
+.footer-contact-group,
+.footer-social-group,
+.footer-newsletter-group {
+  margin: 20px;
+  min-width: 200px;
+  flex: 1;
+  max-width: 280px;
+  text-align: left;
+  
+}
+
+.footer-links-group h4,
+.footer-contact-group h4,
+.footer-social-group h4,
+.footer-newsletter-group h4 {
+  margin-bottom: 15px;
+  font-size: 1.8em;
+  color: var(--text-light);
+}
+
+.footer-links-group a,
+.footer-contact-group p {
+  display: block;
+  color: #B0BEC5;
+  text-decoration: none;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+.footer-contact-group p i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.footer-links-group a:hover,
+.footer-social-group a:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.footer-social-group .social-icons {
+    margin-top: 0;
+    display: flex;
+    justify-content: flex-start;
+    
+}
+
+.footer-social-group .social-icons a {
+    margin: 0 10px 0 0;
+    font-size: 1.5em;
+    color: var(--text-light);
+}
+
+.footer-social-group .social-icons a:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px) scale(1.1);
+}
+
+.footer-newsletter-group .newsletter-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-newsletter-group input {
+  padding: 10px;
+  width: 100%;
+  max-width: 250px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  border-radius: 5px;
+}
+
+.footer-newsletter-group input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-newsletter-group button {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.footer-newsletter-group button:hover {
+  background-color: var(--dark-blue-hover);
+}
+
+.footer-copy {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  margin-top: 20px;
+  padding-bottom: 20px;
+  font-size: 0.85em;
+  color: #78909C;
+}
+
+/* Media Queries */
+@media (max-width: 900px) {
+    .main-header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .main-nav ul {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .logo img { height: 35px; }
+
+    .hero-banner { min-height: 400px; }
+    .hero-banner h1.hero-title { font-size: 2.8em; }
+    .hero-banner p.hero-description { font-size: 1.2em; }
+    .cta-buttons { flex-direction: column; gap: 15px;}
+    .cta-buttons .btn { width: 80%; max-width: 300px; }
+
+    .section-padding { padding: 60px 0; }
+    .features-section h2, .why-us-section h2 { font-size: 2.5em; margin-bottom: 40px; }
+
+    .feature-grid, .benefits-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    .footer-links-group,
+    .footer-contact-group,
+    .footer-social-group,
+    .footer-newsletter-group {
+        text-align: center;
+        min-width: unset;
+        width: 100%;
+        max-width: 300px;
+    }
+    .footer-social-group .social-icons {
+        justify-content: center;
+    }
+    .footer-newsletter-group .newsletter-form {
+        align-items: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    .main-nav ul li { margin-left: 0; }
+
+    .hero-banner { padding: 80px 15px; min-height: 350px;}
+    .hero-banner h1.hero-title { font-size: 2.2em; }
+    .hero-banner p.hero-description { font-size: 1em; }
+
+    .cta-buttons .btn {
+        padding: 15px 30px;
+        font-size: 1.1em;
+    }
+
+    .features-section h2, .why-us-section h2 { font-size: 2em; }
+
+    .feature-item, .benefit-item { padding: 25px; }
+    .feature-item .feature-icon, .benefit-item .benefit-icon { font-size: 2.8em; width: auto; height: auto; }
+    .feature-item h3, .benefit-item h3 { font-size: 1.3em; }
+    .feature-item p, .benefit-item p { font-size: 0.95em; }
+
+    .footer-newsletter-group input { max-width: 90%; }
+}
+
+        /* --- About Page Specific Styles (from your provided about.html) --- */
+        main {
+            flex-grow: 1;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .about-section-wrapper {
+            max-width: 960px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .about-section-wrapper h2 {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .about-section-wrapper p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 20px;
+            text-align: left; /* Keep paragraphs left-aligned */
+        }
+
+        .about-section-wrapper .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .about-section-wrapper ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            text-align: left;
+            display: inline-block; /* Helps center the list if needed by parent */
+        }
+
+        .about-section-wrapper ul li {
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: #555;
+        }
+
+        .about-section-wrapper ul li i {
+            color: var(--secondary-color);
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .about-image {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Media Queries (Combined from frontpage.css and general layout responsiveness) --- */
+        @media (max-width: 900px) {
+            .main-header .container.nav-flex {
+                flex-direction: column;
+                gap: 15px;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .main-nav ul {
+                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            main {
+                padding: 20px;
+                align-items: center;
+            }
+            .about-section-wrapper {
+                padding: 20px;
+            }
+            .about-section-wrapper h2 {
+                font-size: 2em;
+            }
+            .about-section-wrapper p {
+                font-size: 1em;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+            .footer-links-group,
+            .footer-contact-group,
+            .footer-social,
+            .footer-newsletter {
+                text-align: center;
+                min-width: unset;
+                width: 100%;
+                max-width: 300px;
+            }
+            .footer-social {
+                justify-content: center;
+            }
+            .footer-newsletter .newsletter-form {
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-header .container.nav-flex { padding: 10px; }
+            .logo h1 { font-size: 1.8em; }
+            .main-nav ul { gap: 10px; }
+            .main-nav ul li a { padding: 6px 12px; font-size: 0.9em; }
+
+            .about-section-wrapper h2 { font-size: 1.8em; }
+            .about-section-wrapper p { font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/tripbuddy.png') }}" alt="TripBuddy Logo" class="logo-img">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('about') }}" class="nav-link">About</a></li>
+                    <li><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('dashboard') }}" class="nav-btn nav-btn-dashboard">Dashboard</a></li>
+                        <li><a href="{{ url_for('logout') }}" class="nav-btn nav-btn-logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}" class="btn login-btn">Login</a></li>
+                        <li><a href="{{ url_for('register') }}" class="btn signup-btn">Signup</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="about-section-wrapper">
+            <h2>About TripBuddy</h2>
+            <p>Welcome to <span class="highlight">TripBuddy</span>, your ultimate solution for hassle-free ride-sharing. We are a dedicated team passionate about connecting passengers with drivers, making every journey affordable, convenient, and safe. Our platform aims to revolutionize the way people commute by fostering a community of trust and reliability.</p>
+            <p>At TripBuddy, we understand the challenges of daily commuting and long-distance travel. That's why we've built a user-friendly application that allows you to:</p>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Easily find available rides going your way.</li>
+                <li><i class="fas fa-check-circle"></i> Post your own rides to share costs and reduce your carbon footprint.</li>
+                <li><i class="fas fa-check-circle"></i> Connect with verified drivers and passengers.</li>
+                <li><i class="fas fa-check-circle"></i> Enjoy secure and transparent transactions.</li>
+            </ul>
+            <p>Our commitment extends beyond just connecting people; we are committed to providing an exceptional experience, prioritizing safety, and contributing to a sustainable future by promoting carpooling and reducing traffic congestion. Join the TripBuddy community today and experience the future of travel!</p>
+            <img src="{{ url_for('static', filename='images/about-us-hero.jpg') }}" alt="About Us" class="about-image">
+        </div>
+    </main>
+
+<footer class="main-footer section-padding">
+        <div class="footer-container container">
+            <div class="footer-links-group">
+                <h4>Quick Links</h4>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="#">How It Works</a>
+                <a href="{{ url_for('about') }}">About Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-contact-group">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
+                <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
+            </div>
+            <div class="footer-social-group">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-newsletter-group">
+                <h4>Subscribe to Our Newsletter</h4>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email" required />
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

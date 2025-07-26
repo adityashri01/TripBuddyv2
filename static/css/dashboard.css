@@ -117,8 +117,7 @@ main {
     padding: 40px 20px;
     display: flex;
     flex-direction: column;
-    align-items: left; /* left the dashboard-content card and provider-cta-section */
-    margin-left: 40px;
+    align-items: center; /* Center the dashboard-content card and provider-cta-section */
     justify-content: flex-start;
     gap: 30px; /* Space between sections */
     text-align: center;
@@ -141,7 +140,98 @@ main {
     text-align: left; /* Center the main welcome heading */
 }
 
-/* User Summary Section (Avatar, Role, Email) */
+/* --- New: Your Activity Section --- */
+.main-activity-title {
+    font-size: 2.5em;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+    text-align: center;
+    font-family: var(--poppins);
+}
+
+.activity-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Responsive grid with min width */
+    gap: 30px;
+    width: 100%;
+    margin-bottom: 30px; /* Space below this section */
+}
+
+.card {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.discover-adventure-card h3,
+.manage-offers-card h3 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-family: var(--poppins);
+}
+
+.discover-adventure-card p,
+.manage-offers-card p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.search-ride-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px; /* Limit form width */
+    margin-top: 10px;
+}
+
+.form-input {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(41, 121, 255, 0.2);
+}
+
+.search-ride-form .btn {
+    width: 100%;
+    margin-top: 10px; /* Space between last input and button */
+}
+
+.manage-offers-card .status-placeholder {
+    margin-bottom: 20px;
+}
+
+.status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9em;
+    background-color: #e6ffe6; /* Light green */
+    color: #28a745; /* Green */
+    border: 1px solid #28a745;
+}
+
+
+/* --- User Summary Section (Avatar, Role, Email) --- */
 .user-summary-section {
     display: flex;
     align-items: center;
@@ -294,8 +384,7 @@ main {
 
 .provider-cta-text p {
     font-size: 1em;
-    color: #333;
-    margin-bottom: 0; /* Remove default paragraph margin */
+    opacity: 0.9;
 }
 
 .become-provider-btn {
@@ -415,16 +504,16 @@ main {
     background-color: #e8f5e9; /* Light green hover effect */
 }
 
-.action-card .action-icon {
-    font-size: 2.5em; /* Icon size */
-    color: var(--primary-color); /* Blue for icons */
+.action-card i {
+    font-size: 3em;
+    color: var(--primary-color);
     margin-bottom: 15px;
 }
 
-.action-card .action-text {
+.action-card span {
     font-size: 1.1em;
     font-weight: 600;
-    margin: 0; /* Remove default paragraph margin */
+    font-family: var(--poppins);
 }
 
 

@@ -83,7 +83,7 @@
         <div class="provider-cta-section">
             <div class="provider-cta-text">
                 <h2>Want to Offer Rides?</h2>
-                <p>Become a provider and start sharing your journey with others!</p>
+                <p>Become a provider and start sharing your journey with others.</p>
             </div>
             <a href="#" class="become-provider-btn">Become a Provider</a>
         </div>
@@ -116,6 +116,57 @@
                 <p class="stat-description">Dynamic data</p>
             </div>
         </div>
+
+        <!-- NEWLY MOVED SECTION: Quick Actions -->
+        <section class="quick-actions-section">
+            <h2 class="quick-actions-heading">Quick Actions</h2>
+            <div class="action-grid">
+                <a href="{{ url_for('find_rides') }}" class="action-card">
+                    <i class="fas fa-search action-icon"></i>
+                    <p class="action-text">Find a Ride</p>
+                </a>
+                <a href="{{ url_for('post_ride') }}" class="action-card">
+                    <i class="fas fa-plus-circle action-icon"></i>
+                    <p class="action-text">Offer a Ride</p>
+                </a>
+                <a href="#" class="action-card">
+                    <i class="fas fa-history action-icon"></i>
+                    <p class="action-text">Ride History</p>
+                </a>
+                <a href="#" class="action-card">
+                    <i class="fas fa-comments action-icon"></i>
+                    <p class="action-text">Messages</p>
+                </a>
+                <a href="#" class="action-card">
+                    <i class="fas fa-cog action-icon"></i>
+                    <p class="action-text">Settings</p>
+                </a>
+            </div>
+        </section>
+        <!-- END NEWLY MOVED SECTION -->
+
+        <!-- Your Activity Section (now after Quick Actions) -->
+        <h2 class="main-activity-title">Your Activity</h2>
+        <section class="activity-cards-grid">
+            <div class="card discover-adventure-card">
+                <h3>Discover Your Next Adventure</h3>
+                <p>Search for available rides or connect with fellow travelers.</p>
+                <form class="search-ride-form">
+                    <input type="text" placeholder="From where?" class="form-input">
+                    <input type="text" placeholder="To where?" class="form-input">
+                    <button type="submit" class="btn btn-primary">Search Rides <i class="fas fa-arrow-right"></i></button>
+                </form>
+            </div>
+            <div class="card manage-offers-card">
+                <h3>Manage Your Offers</h3>
+                <p>View, edit, or cancel rides you are offering.</p>
+                <div class="status-placeholder">
+                    <span class="status-tag no-pending-offers"><i class="fas fa-check-circle"></i> No pending offers</span>
+                </div>
+                <a href="#" class="btn btn-secondary-outline">View Offers</a>
+            </div>
+        </section>
+        <!-- END Your Activity Section -->
 
     </main>
 

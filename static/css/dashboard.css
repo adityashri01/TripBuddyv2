@@ -1,0 +1,644 @@
+/* --- Dashboard Header Specific Styles (matching header.png) --- */
+.dashboard-header {
+    background: #f8faff; /* Light background */
+    padding: 10px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Light shadow */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.dashboard-header .header-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between; /* Pushes logo to left, right section to right */
+    align-items: center;
+    padding: 0 15px;
+}
+
+.dashboard-header .logo img {
+    height: 80px; /* Adjust as needed */
+    width: auto;
+    display: block;
+}
+
+/* New flex container for nav and actions */
+.header-right-section {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Space between navigation and actions group */
+}
+
+.dashboard-nav-header ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Spacing between navigation items */
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-nav-header ul li a {
+    color: var(--text-dark); /* Dark text color */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05em;
+    padding: 5px 0;
+    transition: color 0.3s ease, transform 0.2s ease;
+    position: relative;
+}
+
+.dashboard-nav-header ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color); /* Blue underline */
+    left: 0;
+    bottom: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+.dashboard-nav-header ul li a:hover {
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.dashboard-nav-header ul li a:hover::after {
+    width: 100%;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Spacing between bell and logout button */
+}
+
+.notification-bell {
+    background: none;
+    border: none;
+    color: var(--text-dark); /* Dark color for bell icon */
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+    padding: 5px; /* Add some padding for easier clicking */
+}
+
+.notification-bell:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.logout-btn-header {
+    background-color: var(--primary-color); /* Blue background for logout button */
+    color: var(--text-light); /* White text */
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.logout-btn-header:hover {
+    background-color: var(--dark-blue-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- Main Content Area for Dashboard --- */
+main {
+    flex-grow: 1; /* Allows main content to take up available space */
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: left; /* left the dashboard-content card and provider-cta-section */
+    margin-left: 40px;
+    justify-content: flex-start;
+    gap: 30px; /* Space between sections */
+    text-align: center;
+}
+
+.dashboard-content {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 40px;
+    width: 100%;
+    max-width: 1400px; /* Increased width */
+    box-sizing: border-box;
+}
+
+.dashboard-content .welcome-heading {
+    font-size: 2.8em;
+    color: var(--primary-color);
+    margin-bottom: 25px; /* Increased margin for separation */
+    text-align: left; /* Center the main welcome heading */
+}
+
+/* User Summary Section (Avatar, Role, Email) */
+.user-summary-section {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Space between avatar and text details */
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9; /* Slightly different background for this section */
+    box-shadow: inset 0 1px 5px rgba(0,0,0,0.03); /* Subtle inner shadow */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: center; /* Center content when wrapped */
+    align-self: flex-start; /* Pushes the section to the left within dashboard-content */
+    width: 100%; /* Ensure it takes full available width for proper alignment */
+    margin-bottom: 30px; /* Space below this section */
+}
+
+.user-avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #e0e0e0; /* Grey background for avatar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevent shrinking */
+    border: 3px solid var(--primary-color); /* Add a border for visual appeal */
+}
+
+.user-avatar-placeholder i {
+    font-size: 3.5em; /* Large user icon */
+    color: #9e9e9e; /* Lighter grey for icon */
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1; /* Allow details to take available space */
+    text-align: left; /* Ensure text remains left-aligned within its column */
+}
+
+.user-details p {
+    display: flex; /* Make text lines flex containers for icon alignment */
+    align-items: center; /* Vertically align icon and text */
+    margin-bottom: 8px; /* Spacing between lines */
+}
+
+.user-details p:last-of-type { /* Target the last paragraph specifically for margin */
+    margin-bottom: 15px; /* Add some space before the edit link */
+}
+
+.user-details .logged-in-as {
+    font-size: 1.1em;
+    color: #555;
+}
+
+.user-details .user-role-display {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--primary-color); /* Primary color for role */
+}
+
+.user-details .user-email-display {
+    font-size: 1em;
+    color: #777;
+}
+
+/* Styling for the new icons within user-details */
+.user-details .info-icon,
+.user-details .role-icon,
+.user-details .email-icon,
+.user-details .meta-icon {
+    margin-right: 10px; /* Space between icon and text */
+    color: var(--primary-color); /* Use primary color for these icons */
+    font-size: 1em; /* Keep icon size relative to text */
+}
+
+.user-details .role-icon {
+    font-size: 1.1em; /* Slightly larger for role icon */
+}
+
+/* Styles for verification status icons */
+.user-meta-info .verified-icon {
+    color: #28a745; /* Green for verified */
+}
+
+.user-meta-info .unverified-icon {
+    color: #ffc107; /* Yellow/Orange for unverified */
+}
+
+.user-meta-info .verify-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: text-decoration 0.3s ease;
+}
+
+.user-meta-info .verify-link:hover {
+    text-decoration: underline;
+}
+
+/* Style for Edit Profile Link */
+.edit-profile-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #e0e0e0; /* Light grey button */
+    color: var(--text-dark);
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-top: 10px; /* Space from email/verification */
+    max-width: 200px;
+}
+
+.edit-profile-link:hover {
+    background-color: #d0d0d0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.edit-profile-link i {
+    color: var(--primary-color); /* Icon color */
+}
+
+/* --- New: Become a Provider CTA Section --- */
+.provider-cta-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space out text and button */
+    background-color: #e0f7fa; /* Light teal background */
+    border-left: 5px solid #00bcd4; /* Teal accent border */
+    border-radius: 8px;
+    padding: 25px 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 20px; /* Space between items when wrapped */
+    width: 100%; /* Ensure it takes full available width */
+    max-width: 1400px; /* Increased width, same as dashboard-content */
+}
+
+.provider-cta-text h2 {
+    font-size: 1.8em;
+    color: #00796b; /* Darker teal for heading */
+    margin-bottom: 5px;
+}
+
+.provider-cta-text p {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 0; /* Remove default paragraph margin */
+}
+
+.become-provider-btn {
+    background-color: #4CAF50; /* Green button */
+    color: var(--text-light);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.become-provider-btn:hover {
+    background-color: #43a047; /* Darker green on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- New: Dashboard Statistics Grid Section --- */
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 20px; /* Space between stat cards */
+    width: 100%;
+    max-width: 1400px; /* Match max-width of other main sections */
+}
+
+.stat-card {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .stat-title {
+    font-size: 1.3em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.stat-card .stat-icon {
+    font-size: 3em; /* Large icon size */
+    color: #61A3FF; /* Lighter blue for icons */
+    margin-bottom: 15px;
+}
+
+.stat-card .stat-value {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.stat-card .stat-description {
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* --- New: Quick Actions Section --- */
+.quick-actions-section {
+    width: 100%;
+    max-width: 1400px; /* Match max-width of other main sections */
+    margin-top: 30px; /* Space from previous section */
+    background-color: var(--background-light); /* Background for the whole section */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.quick-actions-section .quick-actions-heading {
+    font-size: 2.2em;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Responsive grid for actions */
+    gap: 20px; /* Space between action cards */
+    justify-content: center; /* Center items in the grid */
+}
+
+.action-card {
+    background-color: #f9f9f9; /* Slightly lighter background for cards */
+    border-radius: 8px;
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none; /* Remove underline from links */
+    color: var(--text-dark); /* Default text color */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background-color: #e8f5e9; /* Light green hover effect */
+}
+
+.action-card .action-icon {
+    font-size: 2.5em; /* Icon size */
+    color: var(--primary-color); /* Blue for icons */
+    margin-bottom: 15px;
+}
+
+.action-card .action-text {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin: 0; /* Remove default paragraph margin */
+}
+
+
+/* Media Queries for Dashboard Header */
+@media (max-width: 900px) {
+    .dashboard-header .header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .header-right-section {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%; /* Take full width to center items */
+    }
+    .dashboard-nav-header ul {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .dashboard-header .logo img { height: 35px; }
+    .header-actions {
+        flex-direction: row; /* Keep bell and logout in a row */
+        justify-content: center; /* Center them */
+        width: 100%;
+    }
+    .logout-btn-header {
+        width: auto; /* Allow button to size naturally */
+        min-width: 120px; /* Ensure it's not too small */
+    }
+
+    /* Dashboard Content Media Queries */
+    .dashboard-content {
+        padding: 30px 20px;
+        margin-top: 20px;
+    }
+    .dashboard-content .welcome-heading {
+        font-size: 2.2em;
+    }
+    .user-summary-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        align-self: center; /* Center when stacked */
+    }
+    .user-avatar-placeholder {
+        width: 80px;
+        height: 80px;
+    }
+    .user-avatar-placeholder i {
+        font-size: 2.5em;
+    }
+    .user-details {
+        text-align: center; /* Center text when stacked */
+    }
+    .user-details p {
+        justify-content: center; /* Center icons and text in stacked layout */
+    }
+    .user-details .logged-in-as {
+        font-size: 1em;
+    }
+    .user-details .user-role-display {
+        font-size: 1.2em;
+    }
+    .user-details .user-email-display {
+        font-size: 0.9em;
+    }
+    .edit-profile-link {
+        align-self: center; /* Center the edit profile link */
+    }
+
+    /* Provider CTA Section Media Queries */
+    .provider-cta-section {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .provider-cta-text h2 {
+        font-size: 1.6em;
+    }
+    .provider-cta-text p {
+        font-size: 0.9em;
+    }
+    .become-provider-btn {
+        width: 80%;
+        max-width: 250px;
+    }
+
+    /* Dashboard Stats Grid Media Queries */
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust for smaller screens */
+        gap: 15px;
+    }
+    .stat-card {
+        padding: 20px;
+    }
+    .stat-card .stat-title {
+        font-size: 1.1em;
+    }
+    .stat-card .stat-icon {
+        font-size: 2.5em;
+    }
+    .stat-card .stat-value {
+        font-size: 1.8em;
+    }
+
+    /* Quick Actions Section Media Queries */
+    .quick-actions-section {
+        padding: 30px 20px;
+    }
+    .quick-actions-section .quick-actions-heading {
+        font-size: 1.8em;
+    }
+    .action-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adjust for smaller screens */
+        gap: 15px;
+    }
+    .action-card {
+        padding: 20px 10px;
+    }
+    .action-card .action-icon {
+        font-size: 2em;
+    }
+    .action-card .action-text {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-header .header-container { padding: 10px; }
+    .dashboard-nav-header ul { gap: 10px; }
+    .dashboard-nav-header ul li a { font-size: 0.9em; }
+    .notification-bell { font-size: 1.3em; }
+    .logout-btn-header { padding: 8px 15px; font-size: 0.9em; }
+
+    .dashboard-content {
+        padding: 20px 15px;
+    }
+    .dashboard-content .welcome-heading {
+        font-size: 1.8em;
+    }
+    .user-summary-section {
+        padding: 15px;
+    }
+    .user-avatar-placeholder {
+        width: 70px;
+        height: 70px;
+    }
+    .user-avatar-placeholder i {
+        font-size: 2em;
+    }
+    .user-details .logged-in-as {
+        font-size: 0.9em;
+    }
+    .user-details .user-role-display {
+        font-size: 1.1em;
+    }
+    .user-details .user-email-display {
+        font-size: 0.85em;
+    }
+
+    /* Provider CTA Section Media Queries */
+    .provider-cta-section {
+        padding: 15px;
+    }
+    .provider-cta-text h2 {
+        font-size: 1.4em;
+    }
+    .provider-cta-text p {
+        font-size: 0.85em;
+    }
+    .become-provider-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+
+    /* Dashboard Stats Grid Media Queries */
+    .dashboard-stats-grid {
+        grid-template-columns: 1fr; /* Stack cards on very small screens */
+        gap: 10px;
+    }
+    .stat-card {
+        padding: 20px;
+    }
+    .stat-card .stat-title {
+        font-size: 1em;
+    }
+    .stat-card .stat-icon {
+        font-size: 2em;
+    }
+    .stat-card .stat-value {
+        font-size: 1.5em;
+    }
+
+    /* Quick Actions Section Media Queries */
+    .quick-actions-section {
+        padding: 20px 15px;
+    }
+    .quick-actions-section .quick-actions-heading {
+        font-size: 1.6em;
+        margin-bottom: 20px;
+    }
+    .action-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Further adjust for very small screens */
+        gap: 10px;
+    }
+    .action-card {
+        padding: 15px 8px;
+    }
+    .action-card .action-icon {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+    .action-card .action-text {
+        font-size: 0.9em;
+    }
+}

@@ -1,16 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - TripBuddy</title>
+    <!-- Google Fonts and Font Awesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Link to your main global styles (e.g., body, footer, common variables) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- Link to dashboard-specific styles, including its unique header styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <p>Welcome, {{ name }}! (Role: {{ role }})</p>
 
-    <nav>
-        <a href="{{ url_for('post_ride') }}">Post a Ride</a> |
-        <a href="{{ url_for('find_rides') }}">Find Rides</a> |
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </nav>
+    <!-- Dashboard Specific Header -->
+    <header class="dashboard-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/tripbuddy.png') }}" alt="TripBuddy Logo" class="logo-img">
+            </div>
+            <div class="header-right-section">
+                <nav class="dashboard-nav-header">
+                    <ul>
+                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
+                        <li><a href="#">My Rides</a></li> <!-- Placeholder for My Rides link -->
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="notification-bell" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area for Dashboard -->
+    <main>
+        <div class="dashboard-content">
+            <!-- Welcome Section -->
+            <h1 class="welcome-heading">Welcome, {{ name }}!</h1>
+            
+            <div class="user-summary-section">
+                <div class="user-avatar-placeholder">
+                    <i class="fas fa-user-circle"></i> <!-- User avatar icon -->
+                </div>
+                <div class="user-details">
+                    <p class="logged-in-as"><i class="fas fa-info-circle info-icon"></i> You are logged in as a:</p>
+                    <p class="user-role-display">
+                        {% if role == 'Renter' %}
+                            <i class="fas fa-user-tag role-icon"></i> Renter
+                        {% elif role == 'Provider' %}
+                            <i class="fas fa-car-side role-icon"></i> Provider
+                        {% else %}
+                            <i class="fas fa-user role-icon"></i> {{ role }} <!-- Fallback for other roles -->
+                        {% endif %}
+                    </p>
+                    <p class="user-email-display"><i class="fas fa-envelope email-icon"></i> {{ current_user.email }}</p>
+                    
+                    <!-- New: Last Login and Verification Status -->
+                    <p class="user-meta-info"><i class="fas fa-clock meta-icon"></i> Last Login: {{ current_user.last_login_date | default('N/A') }}</p>
+                    <p class="user-meta-info">
+                        {% if current_user.is_email_verified %}
+                            <i class="fas fa-check-circle verified-icon"></i> Email Verified
+                        {% else %}
+                            <i class="fas fa-exclamation-triangle unverified-icon"></i> Email Not Verified (<a href="#" class="verify-link">Verify Now</a>)
+                        {% endif %}
+                    </p>
+
+                    <!-- New: Edit Profile Link -->
+                    <a href="#" class="edit-profile-link"><i class="fas fa-edit"></i> Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- New: Become a Provider CTA Section -->
+        {% if role and (role.lower() == 'renter' or role.lower() == 'provider') %}
+        <div class="provider-cta-section">
+            <div class="provider-cta-text">
+                <h2>Want to Offer Rides?</h2>
+                <p>Become a provider and start sharing your journey with others!</p>
+            </div>
+            <a href="#" class="become-provider-btn">Become a Provider</a>
+        </div>
+        {% endif %}
+
+        <!-- New: Dashboard Statistics Grid Section -->
+        <div class="dashboard-stats-grid">
+            <div class="stat-card">
+                <h3 class="stat-title">Rides Offered</h3>
+                <i class="fas fa-car stat-icon"></i>
+                <p class="stat-value">{{ rides_offered | default(0) }}</p>
+                <p class="stat-description">Dynamic data</p>
+            </div>
+            <div class="stat-card">
+                <h3 class="stat-title">Rides Taken</h3>
+                <i class="fas fa-road stat-icon"></i>
+                <p class="stat-value">{{ rides_taken | default(0) }}</p>
+                <p class="stat-description">Dynamic data</p>
+            </div>
+            <div class="stat-card">
+                <h3 class="stat-title">Average Rating</h3>
+                <i class="fas fa-star stat-icon"></i>
+                <p class="stat-value">{{ average_rating | default('N/A') }}</p>
+                <p class="stat-description">Dynamic data</p>
+            </div>
+            <div class="stat-card">
+                <h3 class="stat-title">Wallet Balance</h3>
+                <i class="fas fa-wallet stat-icon"></i>
+                <p class="stat-value">{{ wallet_balance | default('0.00') }}</p>
+                <p class="stat-description">Dynamic data</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Main Footer - Consistent across all main pages -->
+    <footer class="main-footer section-padding">
+        <div class="footer-container container">
+            <div class="footer-links-group">
+                <h4>Quick Links</h4>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('home') }}#how-it-works">How It Works</a>
+                <a href="{{ url_for('about') }}">About Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-contact-group">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
+                <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
+            </div>
+            <div class="footer-social-group">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-newsletter-group">
+                <h4>Subscribe to Our Newsletter</h4>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email" required />
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
+    </footer>
+
+    <!-- No specific JavaScript for this header type, as profile dropdown is not present here -->
 </body>
 </html>

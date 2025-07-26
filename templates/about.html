@@ -10,6 +10,7 @@
     
 
     <style>
+/* --- Global Styles & Resets --- */
 * {
     margin: 0;
     padding: 0;
@@ -29,6 +30,10 @@
     --shadow-medium: rgba(0, 0, 0, 0.15);
     --poppins: 'Poppins', sans-serif;
     --roboto: 'Roboto', sans-serif;
+    --primary-color-dark: #1976D2; /* Darker shade of primary for gradients */
+    --text-white: #ffffff;
+    --bg-card: #ffffff; /* Card background */
+    --text-medium: #666; /* Medium grey text */
 }
 
 body {
@@ -121,8 +126,8 @@ h1, h2, h3 {
     width: 100%;
 }
 
-/* --- Header Button Styling (Login/Signup) --- */
-.btn {
+/* --- Header Button Styling (Login/Signup/Dashboard) --- */
+.btn, .nav-btn { /* Apply base button styles to both .btn and .nav-btn */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -168,7 +173,22 @@ h1, h2, h3 {
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.btn::after {
+/* Dashboard Button (nav-btn-dashboard) */
+.nav-btn-dashboard {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-btn-dashboard:hover {
+    background-color: var(--dark-blue-hover);
+    border-color: var(--dark-blue-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btn::after, .nav-btn::after {
     display: none;
 }
 
@@ -597,19 +617,16 @@ h1, h2, h3 {
     }
     .logo img { height: 35px; }
 
-    .hero-banner { min-height: 400px; }
-    .hero-banner h1.hero-title { font-size: 2.8em; }
-    .hero-banner p.hero-description { font-size: 1.2em; }
-    .cta-buttons { flex-direction: column; gap: 15px;}
-    .cta-buttons .btn { width: 80%; max-width: 300px; }
+    .about-hero { min-height: 400px; }
+    .about-hero h1 { font-size: 2.8em; }
+    .about-hero p { font-size: 1.2em; }
 
     .section-padding { padding: 60px 0; }
-    .features-section h2, .why-us-section h2 { font-size: 2.5em; margin-bottom: 40px; }
-
-    .feature-grid, .benefits-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 25px;
-    }
+    .about-content { flex-direction: column; }
+    .about-content.reverse-order { flex-direction: column-reverse; }
+    .about-content-text, .about-content-video { min-width: unset; width: 100%; }
+    .team-grid { grid-template-columns: 1fr; }
+    .call-to-action-section h2 { font-size: 2.5em; margin-bottom: 40px; }
 
     .footer-container {
         flex-direction: column;
@@ -640,28 +657,169 @@ h1, h2, h3 {
     }
     .main-nav ul li { margin-left: 0; }
 
-    .hero-banner { padding: 80px 15px; min-height: 350px;}
-    .hero-banner h1.hero-title { font-size: 2.2em; }
-    .hero-banner p.hero-description { font-size: 1em; }
+    .about-hero { padding: 80px 15px; min-height: 350px;}
+    .about-hero h1 { font-size: 2.2em; }
+    .about-hero p { font-size: 1em; }
 
-    .cta-buttons .btn {
-        padding: 15px 30px;
-        font-size: 1.1em;
-    }
+    .call-to-action-section h2 { font-size: 2em; }
 
-    .features-section h2, .why-us-section h2 { font-size: 2em; }
-
-    .feature-item, .benefit-item { padding: 25px; }
-    .feature-item .feature-icon, .benefit-item .benefit-icon { font-size: 2.8em; width: auto; height: auto; }
-    .feature-item h3, .benefit-item h3 { font-size: 1.3em; }
-    .feature-item p, .benefit-item p { font-size: 0.95em; }
+    .team-member { padding: 20px; }
+    .team-member img { width: 100px; height: 100px; }
+    .team-member h3 { font-size: 1.2em; }
+    .team-member p { font-size: 0.9em; }
 
     .footer-newsletter-group input { max-width: 90%; }
 }
 
+/* Profile Dropdown Container */
+.profile-dropdown-container {
+    position: relative; /* Essential for positioning the dropdown menu */
+    display: flex; /* To align items if needed, or just block */
+    align-items: center;
+}
 
+/* Profile Circle Button */
+.profile-circle {
+    background-color: var(--primary-color); /* Blue background */
+    color: var(--text-light); /* White icon */
+    border: none;
+    border-radius: 50%; /* Make it a circle */
+    width: 40px; /* Size of the circle */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em; /* Icon size */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    outline: none; /* Remove outline on focus */
+    padding: 0; /* Remove default button padding */
+}
 
+.profile-circle:hover {
+    background-color: var(--dark-blue-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
 
+/* Profile Dropdown Menu */
+.profile-dropdown-menu {
+    position: absolute;
+    top: 100%; /* Position below the profile circle */
+    right: 0; /* Align to the right of the profile circle */
+    background-color: var(--background-light);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    min-width: 220px;
+    padding: 15px;
+    z-index: 1001; /* Ensure it's above other content */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid #eee;
+}
+
+.profile-dropdown-menu.show-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.profile-info {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.profile-info p {
+    margin: 5px 0;
+    color: var(--text-dark);
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+.profile-info p.email {
+    font-size: 0.85em;
+    color: #666;
+    word-break: break-all; /* Ensures long emails wrap */
+}
+
+.profile-info p.role {
+    font-size: 0.85em;
+    color: #888;
+}
+
+.profile-info strong {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.1em;
+}
+
+.dropdown-logout-btn {
+    background-color: #f44336; /* Red color for logout */
+    color: var(--text-light);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex; /* For icon alignment */
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Space between text and icon */
+    font-size: 0.95em;
+}
+
+.dropdown-logout-btn:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+    transform: translateY(-1px);
+}
+
+/* Adjust navigation list item for dropdown to prevent overflow issues */
+.main-nav ul li.profile-dropdown-container {
+    padding-left: 0; /* Remove default list item padding */
+    padding-right: 0;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 900px) {
+    .profile-dropdown-menu {
+        right: 15px; /* Adjust positioning for smaller screens to not go off-screen */
+        left: auto;
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-circle {
+        width: 35px;
+        height: 35px;
+        font-size: 1.3em;
+    }
+    .profile-dropdown-menu {
+        min-width: 180px;
+        padding: 10px;
+        right: 10px;
+    }
+    .profile-info p {
+        font-size: 0.9em;
+    }
+    .profile-info p.email {
+        font-size: 0.8em;
+    }
+    .dropdown-logout-btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+}
     </style>
 </head>
 <body>
@@ -677,7 +835,19 @@ h1, h2, h3 {
                     <li><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('dashboard') }}" class="nav-btn nav-btn-dashboard">Dashboard</a></li>
-                        <li><a href="{{ url_for('logout') }}" class="nav-btn nav-btn-logout">Logout</a></li>
+                        <li class="profile-dropdown-container">
+                            <button class="profile-circle" id="profileCircle">
+                                <i class="fas fa-user-circle"></i>
+                            </button>
+                            <div class="profile-dropdown-menu" id="profileDropdownMenu">
+                                <div class="profile-info">
+                                    <p><strong>{{ current_user.username }}</strong></p>
+                                    <p class="email">{{ current_user.email }}</p>
+                                    <p class="role">Role: {{ current_user.role }}</p>
+                                </div>
+                                <a href="{{ url_for('logout') }}" class="dropdown-logout-btn">Logout <i class="fas fa-sign-out-alt"></i></a>
+                            </div>
+                        </li>
                     {% else %}
                         <li><a href="{{ url_for('login') }}" class="btn login-btn">Login</a></li>
                         <li><a href="{{ url_for('register') }}" class="btn signup-btn">Signup</a></li>
@@ -713,7 +883,6 @@ h1, h2, h3 {
                     </div>
                     <div class="about-content-text">
                         <h2>Our Impact & Values</h2>
-                        <p>Since our inception, TripBuddy has facilitated thousands of shared rides, leading to significant reductions in individual travel costs and a measurable decrease in CO2 emissions. We are committed to:</p>
                         <ul>
                             <li><i class="fas fa-leaf"></i> **Sustainability:** Championing eco-friendly travel choices.</li>
                             <li><i class="fas fa-users"></i> **Community:** Building a network of trusted and friendly travelers.</li>
@@ -819,7 +988,7 @@ h1, h2, h3 {
             <div class="footer-links-group">
                 <h4>Quick Links</h4>
                 <a href="{{ url_for('home') }}">Home</a>
-                <a href="{{ url_for('home') }}#how-it-works">How It Works</a>
+                <!-- <a href="#">How It Works</a> -->
                 <a href="{{ url_for('about') }}">About Us</a>
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
@@ -850,5 +1019,24 @@ h1, h2, h3 {
         <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
     </footer>
 
+    <script>
+        // JavaScript for profile dropdown functionality
+        const profileCircle = document.getElementById('profileCircle');
+        const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+
+        if (profileCircle && profileDropdownMenu) {
+            profileCircle.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent click from immediately closing dropdown
+                profileDropdownMenu.classList.toggle('show-dropdown');
+            });
+
+            // Close the dropdown if the user clicks outside of it
+            window.addEventListener('click', function(event) {
+                if (profileDropdownMenu.classList.contains('show-dropdown') && !profileDropdownMenu.contains(event.target) && event.target !== profileCircle) {
+                    profileDropdownMenu.classList.remove('show-dropdown');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

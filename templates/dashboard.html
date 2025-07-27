@@ -87,8 +87,8 @@
             <div class="stat-card">
                 <h3 class="stat-title">Rides Taken</h3>
                 <i class="fas fa-road stat-icon"></i>
-                <p class="stat-value">{{ rides_taken | default(0) }}</p>
-                <p class="stat-description">Dynamic data</p>
+                <p class="stat-value">{{ rides_taken_count | default(0) }}</p> {# Display dynamic rides taken count #}
+                <p class="stat-description">Seats booked by you</p>
             </div>
             <div class="stat-card">
                 <h3 class="stat-title">Average Rating</h3>
@@ -148,7 +148,7 @@
                         {% for ride in user_rides %}
                             <li class="offer-item">
                                 <span class="offer-route">{{ ride.start_location }} to {{ ride.end_location }}</span>
-                                <span class="offer-details">Price: ₹{{ "%.2f"|format(ride.price) }} | Seats: {{ ride.seats }} | Booked: {{ 'Yes' if ride.is_booked else 'No' }}</span>
+                                <span class="offer-details">Price: ₹{{ "%.2f"|format(ride.price) }} | Available Seats: {{ ride.seats }}</span> {# Changed from 'Seats' to 'Available Seats' and removed 'Booked' #}
                                 <div class="offer-actions">
                                     <a href="#" class="btn btn-sm btn-info">Edit</a>
                                     <a href="#" class="btn btn-sm btn-danger">Cancel</a>

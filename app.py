@@ -123,8 +123,8 @@ def dashboard():
                            user_rides=user_rides,
                            rides_offered_count=rides_offered_count,
                            rides_taken_count=rides_taken_count,
-                           can_offer_rides=current_user.can_offer_rides, # Pass new flags
-                           can_find_rides=current_user.can_find_rides) # Pass new flags
+                           can_offer_rides=current_user.can_offer_rides,
+                           can_find_rides=current_user.can_find_rides)
 
 
 @app.route('/activate_offer_rides', methods=['POST'])
@@ -132,8 +132,12 @@ def dashboard():
 def activate_offer_rides():
     if current_user.role == 'Renter': # Only a Renter can activate Provider features
         current_user.can_offer_rides = True
+        if current_user.can_find_rides: # If user can already find rides (i.e., was a Renter)
+            current_user.role = 'Renter, Provider' # Update role to both
+            flash('You have activated "Offer a Ride" and your role is now "Renter, Provider"!', 'success')
+        else:
+            flash('You have activated "Offer a Ride"!', 'success')
         db.session.commit()
-        flash('You can now offer rides!', 'success')
     else:
         flash('Only Renter roles can activate offering rides.', 'danger')
     return redirect(url_for('dashboard'))
@@ -144,8 +148,12 @@ def activate_offer_rides():
 def activate_find_rides():
     if current_user.role == 'Provider': # Only a Provider can activate Renter features
         current_user.can_find_rides = True
+        if current_user.can_offer_rides: # If user can already offer rides (i.e., was a Provider)
+            current_user.role = 'Renter, Provider' # Update role to both
+            flash('You have activated "Find a Ride" and your role is now "Renter, Provider"!', 'success')
+        else:
+            flash('You have activated "Find a Ride"!', 'success')
         db.session.commit()
-        flash('You can now find and book rides!', 'success')
     else:
         flash('Only Provider roles can activate finding rides.', 'danger')
     return redirect(url_for('dashboard'))

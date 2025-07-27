@@ -48,6 +48,8 @@
                             <i class="fas fa-user-tag role-icon"></i> Renter
                         {% elif role == 'Provider' %}
                             <i class="fas fa-car-side role-icon"></i> Provider
+                        {% elif role == 'Renter, Provider' %}
+                            <i class="fas fa-handshake role-icon"></i> Renter & Provider
                         {% else %}
                             <i class="fas fa-user role-icon"></i> {{ role }} {% endif %}
                     </p>
@@ -66,7 +68,6 @@
                 </div>
             </div>
         </div>
-
 
         {% if role.lower() == 'renter' and not can_offer_rides %}
         <div class="provider-cta-section">

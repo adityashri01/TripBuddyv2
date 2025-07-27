@@ -388,7 +388,7 @@ main {
 }
 
 .become-provider-btn {
-    background-color: #4CAF50; /* Green button */
+  background-color: #4CAF50; /* Green button */
     color: var(--text-light);
     border: none;
     padding: 12px 25px;

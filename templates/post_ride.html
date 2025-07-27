@@ -103,6 +103,49 @@
             font-size: 1em; /* Consistent icon size */
         }
 
+        .activation-required {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #ffeccf; /* Light warning color */
+            border: 1px solid #ffbe76;
+            border-radius: 12px;
+            margin: 40px auto;
+            max-width: 600px;
+        }
+
+        .activation-required h2 {
+            color: #d17a00; /* Darker warning color */
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .activation-required p {
+            color: #d17a00;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .activation-required .btn-go-dashboard {
+            background-color: #d17a00;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .activation-required .btn-go-dashboard:hover {
+            background-color: #a35f00;
+        }
+
+        .disabled-link {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         /* Media Queries for Responsiveness */
         @media (max-width: 768px) {
             .post-ride-main {
@@ -158,8 +201,8 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link" onclick="return false;"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link" onclick="return false;"{% endif %}>Post Ride</a></li>
                         <li><a href="#">My Rides</a></li> </ul>
                 </nav>
                 <div class="header-actions">
@@ -174,32 +217,40 @@
 
     <main class="post-ride-main">
         <div class="post-ride-container">
-            <h1 class="post-ride-heading">Offer a New Ride</h1>
-            <p class="post-ride-subheading">Share your journey and connect with fellow travelers.</p>
-
-            <form action="{{ url_for('post_ride') }}" method="POST" class="post-ride-form">
-                <div class="form-group">
-                    <label for="start_location"><i class="fas fa-map-marker-alt"></i> Starting Location:</label>
-                    <input type="text" id="start_location" name="start_location" placeholder="e.g., Downtown, City A" required>
+            {% if not current_user.can_offer_rides %}
+                <div class="activation-required">
+                    <h2>Feature Not Activated</h2>
+                    <p>As a **Renter**, you need to activate the "Offer a Ride" feature from your dashboard to post a new ride.</p>
+                    <a href="{{ url_for('dashboard') }}" class="btn-go-dashboard">Go to Dashboard to Activate</a>
                 </div>
+            {% else %}
+                <h1 class="post-ride-heading">Offer a New Ride</h1>
+                <p class="post-ride-subheading">Share your journey and connect with fellow travelers.</p>
 
-                <div class="form-group">
-                    <label for="end_location"><i class="fas fa-map-marked-alt"></i> Destination:</label>
-                    <input type="text" id="end_location" name="end_location" placeholder="e.g., Airport, City B" required>
-                </div>
+                <form action="{{ url_for('post_ride') }}" method="POST" class="post-ride-form">
+                    <div class="form-group">
+                        <label for="start_location"><i class="fas fa-map-marker-alt"></i> Starting Location:</label>
+                        <input type="text" id="start_location" name="start_location" placeholder="e.g., Downtown, City A" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="price"><i class="fas fa-dollar-sign"></i> Price per Seat (₹):</label>
-                    <input type="number" id="price" name="price" step="0.01" min="0" placeholder="e.g., 50.00" required>
-                </div>
+                    <div class="form-group">
+                        <label for="end_location"><i class="fas fa-map-marked-alt"></i> Destination:</label>
+                        <input type="text" id="end_location" name="end_location" placeholder="e.g., Airport, City B" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="seats"><i class="fas fa-chair"></i> Available Seats:</label>
-                    <input type="number" id="seats" name="seats" min="1" max="10" placeholder="e.g., 3" required>
-                </div>
+                    <div class="form-group">
+                        <label for="price"><i class="fas fa-dollar-sign"></i> Price per Seat (₹):</label>
+                        <input type="number" id="price" name="price" step="0.01" min="0" placeholder="e.g., 50.00" required>
+                    </div>
 
-                <button type="submit" class="btn btn-primary post-ride-btn">Post Ride <i class="fas fa-arrow-right"></i></button>
-            </form>
+                    <div class="form-group">
+                        <label for="seats"><i class="fas fa-chair"></i> Available Seats:</label>
+                        <input type="number" id="seats" name="seats" min="1" max="10" placeholder="e.g., 3" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary post-ride-btn">Post Ride <i class="fas fa-arrow-right"></i></button>
+                </form>
+            {% endif %}
         </div>
     </main>
 

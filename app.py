@@ -5,7 +5,7 @@ from flask_login import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from models import db, User, Ride #
+from models import db, User, Ride
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tripbuddy.db'
@@ -64,8 +64,18 @@ def register():
             return redirect(url_for('register'))
 
         hashed_password = generate_password_hash(password)
-        # Initialize rides_taken to 0 for a new user
-        new_user = User(username=username, email=email, password=hashed_password, role=role, rides_taken=0) #
+
+        new_user = User(username=username, email=email, password=hashed_password, role=role, rides_taken=0)
+
+        # Set initial activation flags based on role
+        if role == 'Renter':
+            new_user.can_find_rides = True
+            new_user.can_offer_rides = False
+        elif role == 'Provider':
+            new_user.can_find_rides = False
+            new_user.can_offer_rides = True
+        # For other roles, you might want to set both to False or define default behavior
+
         db.session.add(new_user)
         db.session.commit()
 
@@ -104,17 +114,50 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # Fetch rides offered by the current user
-    user_rides = Ride.query.filter_by(creator_id=current_user.id).all() #
+    user_rides = Ride.query.filter_by(creator_id=current_user.id).all()
     rides_offered_count = len(user_rides)
-    # Get rides taken count directly from the current user object
-    rides_taken_count = current_user.rides_taken #
-    return render_template('dashboard.html', name=current_user.username, role=current_user.role, user_rides=user_rides, rides_offered_count=rides_offered_count, rides_taken_count=rides_taken_count)
+    rides_taken_count = current_user.rides_taken
+    return render_template('dashboard.html',
+                           name=current_user.username,
+                           role=current_user.role,
+                           user_rides=user_rides,
+                           rides_offered_count=rides_offered_count,
+                           rides_taken_count=rides_taken_count,
+                           can_offer_rides=current_user.can_offer_rides, # Pass new flags
+                           can_find_rides=current_user.can_find_rides) # Pass new flags
+
+
+@app.route('/activate_offer_rides', methods=['POST'])
+@login_required
+def activate_offer_rides():
+    if current_user.role == 'Renter': # Only a Renter can activate Provider features
+        current_user.can_offer_rides = True
+        db.session.commit()
+        flash('You can now offer rides!', 'success')
+    else:
+        flash('Only Renter roles can activate offering rides.', 'danger')
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/activate_find_rides', methods=['POST'])
+@login_required
+def activate_find_rides():
+    if current_user.role == 'Provider': # Only a Provider can activate Renter features
+        current_user.can_find_rides = True
+        db.session.commit()
+        flash('You can now find and book rides!', 'success')
+    else:
+        flash('Only Provider roles can activate finding rides.', 'danger')
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/post_ride', methods=['GET', 'POST'])
 @login_required
 def post_ride():
+    if not current_user.can_offer_rides:
+        flash('You need to activate "Offer a Ride" from your dashboard to post a ride.', 'warning')
+        return redirect(url_for('dashboard'))
+
     if request.method == 'POST':
         start = request.form['start_location']
         end = request.form['end_location']
@@ -131,7 +174,7 @@ def post_ride():
             price=price,
             seats=seats,
             creator_id=current_user.id
-        ) #
+        )
         db.session.add(new_ride)
         db.session.commit()
         flash('Ride posted successfully!', 'success')
@@ -143,46 +186,54 @@ def post_ride():
 @app.route('/find_rides')
 @login_required
 def find_rides():
+    if not current_user.can_find_rides:
+        flash('You need to activate "Find a Ride" from your dashboard to view and book rides.', 'warning')
+        return redirect(url_for('dashboard'))
+
     # Fetch rides that have at least 1 seat available and are not created by the current user
-    rides = Ride.query.filter(Ride.seats > 0, Ride.creator_id != current_user.id).all() #
+    rides = Ride.query.filter(Ride.seats > 0, Ride.creator_id != current_user.id).all()
     return render_template('find_rides.html', rides=rides)
 
 
 @app.route('/book_ride/<int:ride_id>', methods=['POST'])
 @login_required
 def book_ride(ride_id):
+    if not current_user.can_find_rides:
+        flash('You need to activate "Find a Ride" from your dashboard to book rides.', 'warning')
+        return redirect(url_for('dashboard'))
+
     ride = Ride.query.get_or_404(ride_id)
     requested_seats_str = request.form.get('seats_to_book')
 
     if not requested_seats_str:
         flash("Please specify the number of seats to book.", 'danger')
-        return redirect(url_for('dashboard')) # Redirect to dashboard
+        return redirect(url_for('dashboard'))
 
     try:
         requested_seats = int(requested_seats_str)
     except ValueError:
         flash("Invalid number of seats. Please enter a valid number.", 'danger')
-        return redirect(url_for('dashboard')) # Redirect to dashboard
+        return redirect(url_for('dashboard'))
 
     if requested_seats <= 0:
         flash("You must book at least one seat.", 'danger')
-        return redirect(url_for('dashboard')) # Redirect to dashboard
+        return redirect(url_for('dashboard'))
 
     if requested_seats > ride.seats:
         flash(f"Only {ride.seats} seats are available for this ride.", 'danger')
-        return redirect(url_for('dashboard')) # Redirect to dashboard
+        return redirect(url_for('dashboard'))
 
     # Prevent a user from booking their own ride
     if ride.creator_id == current_user.id:
         flash("You cannot book seats on your own offered ride.", 'danger')
-        return redirect(url_for('dashboard')) # Redirect to dashboard
+        return redirect(url_for('dashboard'))
 
-    ride.seats -= requested_seats # Decrement available seats #
-    current_user.rides_taken += requested_seats # Increment rides_taken for the booking user #
+    ride.seats -= requested_seats
+    current_user.rides_taken += requested_seats
     db.session.commit()
 
     flash(f'{requested_seats} seat(s) on the ride from {ride.start_location} to {ride.end_location} booked successfully!', 'success')
-    return redirect(url_for('dashboard')) # Always redirect to dashboard after booking attempt
+    return redirect(url_for('dashboard'))
 
 
 if __name__ == "__main__":

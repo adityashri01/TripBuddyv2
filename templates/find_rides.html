@@ -143,6 +143,55 @@
             color: var(--accent-color);
         }
 
+        .activation-required {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #ffeccf; /* Light warning color */
+            border: 1px solid #ffbe76;
+            border-radius: 12px;
+            margin: 40px auto;
+            max-width: 600px;
+        }
+
+        .activation-required h2 {
+            color: #d17a00; /* Darker warning color */
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .activation-required p {
+            color: #d17a00;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .activation-required .btn-go-dashboard {
+            background-color: #d17a00;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .activation-required .btn-go-dashboard:hover {
+            background-color: #a35f00;
+        }
+
+        .disabled-link {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .disabled-card {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .find-rides-heading {
@@ -183,8 +232,8 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link" onclick="return false;"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link" onclick="return false;"{% endif %}>Post Ride</a></li>
                         <li><a href="#">My Rides</a></li>
                     </ul>
                 </nav>
@@ -203,28 +252,34 @@
             <h1 class="find-rides-heading">Available Rides</h1>
             <p class="find-rides-subheading">Find and book your next trip with ease!</p>
 
-            {# Removed the flash message display block from here #}
-
-            {% if rides %}
-                <div class="rides-list">
-                    {% for ride in rides %}
-                        <div class="ride-card">
-                            <h3><i class="fas fa-map-marker-alt"></i> {{ ride.start_location }} to {{ ride.end_location }}</h3>
-                            <p><i class="fas fa-rupee-sign"></i> Price: ₹{{ "%.2f"|format(ride.price) }} per seat</p>
-                            <p><i class="fas fa-chair"></i> Available Seats: {{ ride.seats }}</p>
-                            <p><i class="fas fa-user"></i> Offered by: {{ ride.creator.username }}</p>
-                            <div class="ride-actions">
-                                <form action="{{ url_for('book_ride', ride_id=ride.id) }}" method="POST" style="display: flex; gap: 10px; align-items: center;">
-                                    <label for="seats-{{ ride.id }}">Seats:</label>
-                                    <input type="number" id="seats-{{ ride.id }}" name="seats_to_book" value="1" min="1" max="{{ ride.seats }}" required>
-                                    <button type="submit" class="btn-book-ride">Book Now</button>
-                                </form>
-                            </div>
-                        </div>
-                    {% endfor %}
+            {% if not current_user.can_find_rides %}
+                <div class="activation-required">
+                    <h2>Feature Not Activated</h2>
+                    <p>As a **Provider**, you need to activate the "Find a Ride" feature from your dashboard to view and book rides.</p>
+                    <a href="{{ url_for('dashboard') }}" class="btn-go-dashboard">Go to Dashboard to Activate</a>
                 </div>
             {% else %}
-                <p class="no-rides-message"><i class="fas fa-info-circle"></i> No rides currently available. Check back later!</p>
+                {% if rides %}
+                    <div class="rides-list">
+                        {% for ride in rides %}
+                            <div class="ride-card">
+                                <h3><i class="fas fa-map-marker-alt"></i> {{ ride.start_location }} to {{ ride.end_location }}</h3>
+                                <p><i class="fas fa-rupee-sign"></i> Price: ₹{{ "%.2f"|format(ride.price) }} per seat</p>
+                                <p><i class="fas fa-chair"></i> Available Seats: {{ ride.seats }}</p>
+                                <p><i class="fas fa-user"></i> Offered by: {{ ride.creator.username }}</p>
+                                <div class="ride-actions">
+                                    <form action="{{ url_for('book_ride', ride_id=ride.id) }}" method="POST" style="display: flex; gap: 10px; align-items: center;">
+                                        <label for="seats-{{ ride.id }}">Seats:</label>
+                                        <input type="number" id="seats-{{ ride.id }}" name="seats_to_book" value="1" min="1" max="{{ ride.seats }}" required>
+                                        <button type="submit" class="btn-book-ride">Book Now</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> No rides currently available. Check back later!</p>
+                {% endif %}
             {% endif %}
         </div>
     </main>

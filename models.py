@@ -11,7 +11,10 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), nullable=False) # e.g., 'Renter', 'Provider'
     rides_created = db.relationship('Ride', backref='creator', lazy=True)
-    rides_taken = db.Column(db.Integer, default=0, nullable=False) # New field to track rides taken
+    rides_taken = db.Column(db.Integer, default=0, nullable=False)
+    # New fields for activation
+    can_offer_rides = db.Column(db.Boolean, default=False, nullable=False)
+    can_find_rides = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return f'<User {self.username}>'

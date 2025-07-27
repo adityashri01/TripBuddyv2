@@ -20,8 +20,8 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not can_find_rides %}class="disabled-link" onclick="return false;"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not can_offer_rides %}class="disabled-link" onclick="return false;"{% endif %}>Post Ride</a></li>
                         <li><a href="#">My Rides</a></li> </ul>
                 </nav>
                 <div class="header-actions">
@@ -67,21 +67,26 @@
             </div>
         </div>
 
-        {% if role and role.lower() == 'renter' %}
+
+        {% if role.lower() == 'renter' and not can_offer_rides %}
         <div class="provider-cta-section">
             <div class="provider-cta-text">
                 <h2>Want to Offer Rides?</h2>
-                <p>Become a provider and start sharing your journey with others.</p>
+                <p>Activate this feature to start sharing your journey and earning.</p>
             </div>
-            <a href="#" class="become-provider-btn">Become a Provider</a>
+            <form action="{{ url_for('activate_offer_rides') }}" method="POST">
+                <button type="submit" class="become-provider-btn">Activate Offer Rides</button>
+            </form>
         </div>
-        {% elif role and role.lower() == 'provider' %}
-        <div class="provider-cta-section"> {# Reusing the same class for consistent styling #}
+        {% elif role.lower() == 'provider' and not can_find_rides %}
+        <div class="provider-cta-section">
             <div class="provider-cta-text">
                 <h2>Want to Book a Ride?</h2>
-                <p>Find rides offered by others and book your seat.</p>
+                <p>Activate this feature to find and book rides offered by others.</p>
             </div>
-            <a href="{{ url_for('find_rides') }}" class="become-provider-btn">Find a Ride</a> {# Linking to find_rides #}
+            <form action="{{ url_for('activate_find_rides') }}" method="POST">
+                <button type="submit" class="become-provider-btn">Activate Find Rides</button>
+            </form>
         </div>
         {% endif %}
 
@@ -115,11 +120,11 @@
         <section class="quick-actions-section">
             <h2 class="quick-actions-heading">Quick Actions</h2>
             <div class="action-grid">
-                <a href="{{ url_for('find_rides') }}" class="action-card">
+                <a href="{{ url_for('find_rides') }}" class="action-card {% if not can_find_rides %}disabled-card{% endif %}">
                     <i class="fas fa-search action-icon"></i>
                     <p class="action-text">Find a Ride</p>
                 </a>
-                <a href="{{ url_for('post_ride') }}" class="action-card">
+                <a href="{{ url_for('post_ride') }}" class="action-card {% if not can_offer_rides %}disabled-card{% endif %}">
                     <i class="fas fa-plus-circle action-icon"></i>
                     <p class="action-text">Offer a Ride</p>
                 </a>

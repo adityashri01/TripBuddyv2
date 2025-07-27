@@ -1,25 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post a Ride - TripBuddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <style>
+        /* --- Post Ride Page Specific Styles (Embedded) --- */
+        .post-ride-main {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Changed from flex-start to center to vertically center the form */
+            padding: 40px 20px;
+            min-height: calc(100vh - 100px); /* Adjust based on header/footer height */
+            background-color: var(--background-light); /* Consistent background */
+        }
+
+        .post-ride-container {
+            background-color: var(--bg-card); /* White card background */
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium); /* Medium shadow for depth */
+            padding: 40px;
+            width: 100%;
+            max-width: 500px; /* Max width for the form container */
+            text-align: center;
+        }
+
+        .post-ride-heading {
+            font-family: var(--poppins);
+            font-size: 2.2em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .post-ride-subheading {
+            color: var(--text-medium);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .post-ride-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Space between form groups */
+            text-align: left; /* Align form elements to the left */
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Space between icon and text */
+        }
+
+        .form-group label i {
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            color: var(--text-dark);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(41, 121, 255, 0.2); /* Light primary color shadow on focus */
+            outline: none;
+        }
+
+        .post-ride-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .post-ride-btn i {
+            font-size: 1em; /* Consistent icon size */
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .post-ride-main {
+                padding: 30px 15px;
+            }
+            .post-ride-container {
+                padding: 30px 20px;
+            }
+            .post-ride-heading {
+                font-size: 1.8em;
+            }
+            .post-ride-subheading {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+            .form-group label {
+                font-size: 0.9em;
+            }
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
+            .post-ride-btn {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .post-ride-container {
+                padding: 20px 15px;
+                border-radius: 8px;
+            }
+            .post-ride-heading {
+                font-size: 1.5em;
+            }
+            .post-ride-subheading {
+                font-size: 0.9em;
+            }
+            .post-ride-btn {
+                font-size: 0.9em;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Post a New Ride</h1>
-    <form method="POST" action="{{ url_for('post_ride') }}">
-        <label>Start Location:</label><br>
-        <input type="text" name="start_location" required><br><br>
 
-        <label>End Location:</label><br>
-        <input type="text" name="end_location" required><br><br>
+    <header class="dashboard-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/tripbuddy.png') }}" alt="TripBuddy Logo" class="logo-img">
+            </div>
+            <div class="header-right-section">
+                <nav class="dashboard-nav-header">
+                    <ul>
+                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
+                        <li><a href="#">My Rides</a></li> </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="notification-bell" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-        <label>Price (in your currency):</label><br>
-        <input type="number" name="price" step="0.01" required><br><br>
+    <main class="post-ride-main">
+        <div class="post-ride-container">
+            <h1 class="post-ride-heading">Offer a New Ride</h1>
+            <p class="post-ride-subheading">Share your journey and connect with fellow travelers.</p>
 
-        <label>Seats Available:</label><br>
-        <input type="number" name="seats" min="1" required><br><br>
+            <form action="{{ url_for('post_ride') }}" method="POST" class="post-ride-form">
+                <div class="form-group">
+                    <label for="start_location"><i class="fas fa-map-marker-alt"></i> Starting Location:</label>
+                    <input type="text" id="start_location" name="start_location" placeholder="e.g., Downtown, City A" required>
+                </div>
 
-        <button type="submit">Post Ride</button>
-    </form>
-    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+                <div class="form-group">
+                    <label for="end_location"><i class="fas fa-map-marked-alt"></i> Destination:</label>
+                    <input type="text" id="end_location" name="end_location" placeholder="e.g., Airport, City B" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price"><i class="fas fa-dollar-sign"></i> Price per Seat (₹):</label>
+                    <input type="number" id="price" name="price" step="0.01" min="0" placeholder="e.g., 50.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="seats"><i class="fas fa-chair"></i> Available Seats:</label>
+                    <input type="number" id="seats" name="seats" min="1" max="10" placeholder="e.g., 3" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary post-ride-btn">Post Ride <i class="fas fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="main-footer section-padding">
+        <div class="footer-container container">
+            <div class="footer-links-group">
+                <h4>Quick Links</h4>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('home') }}#how-it-works">How It Works</a>
+                <a href="{{ url_for('about') }}">About Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div class="footer-contact-group">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
+                <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
+            </div>
+            <div class="footer-social-group">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-newsletter-group">
+                <h4>Subscribe to Our Newsletter</h4>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email" required />
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
+    </footer>
+
 </body>
 </html>

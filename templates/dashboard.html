@@ -4,18 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - TripBuddy</title>
-    <!-- Google Fonts and Font Awesome for icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <!-- Link to your main global styles (e.g., body, footer, common variables) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <!-- Link to dashboard-specific styles, including its unique header styling -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
 
-    <!-- Dashboard Specific Header -->
     <header class="dashboard-header">
         <div class="header-container">
             <div class="logo">
@@ -26,8 +22,7 @@
                     <ul>
                         <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
                         <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
-                        <li><a href="#">My Rides</a></li> <!-- Placeholder for My Rides link -->
-                    </ul>
+                        <li><a href="#">My Rides</a></li> </ul>
                 </nav>
                 <div class="header-actions">
                     <button class="notification-bell" aria-label="Notifications">
@@ -39,16 +34,13 @@
         </div>
     </header>
 
-    <!-- Main Content Area for Dashboard -->
     <main>
         <div class="dashboard-content">
-            <!-- Welcome Section -->
             <h1 class="welcome-heading">Welcome, {{ name }}!</h1>
             
             <div class="user-summary-section">
                 <div class="user-avatar-placeholder">
-                    <i class="fas fa-user-circle"></i> <!-- User avatar icon -->
-                </div>
+                    <i class="fas fa-user-circle"></i> </div>
                 <div class="user-details">
                     <p class="logged-in-as"><i class="fas fa-info-circle info-icon"></i> You are logged in as a:</p>
                     <p class="user-role-display">
@@ -57,12 +49,10 @@
                         {% elif role == 'Provider' %}
                             <i class="fas fa-car-side role-icon"></i> Provider
                         {% else %}
-                            <i class="fas fa-user role-icon"></i> {{ role }} <!-- Fallback for other roles -->
-                        {% endif %}
+                            <i class="fas fa-user role-icon"></i> {{ role }} {% endif %}
                     </p>
                     <p class="user-email-display"><i class="fas fa-envelope email-icon"></i> {{ current_user.email }}</p>
                     
-                    <!-- New: Last Login and Verification Status -->
                     <p class="user-meta-info"><i class="fas fa-clock meta-icon"></i> Last Login: {{ current_user.last_login_date | default('N/A') }}</p>
                     <p class="user-meta-info">
                         {% if current_user.is_email_verified %}
@@ -72,13 +62,11 @@
                         {% endif %}
                     </p>
 
-                    <!-- New: Edit Profile Link -->
                     <a href="#" class="edit-profile-link"><i class="fas fa-edit"></i> Edit Profile</a>
                 </div>
             </div>
         </div>
 
-        <!-- New: Become a Provider CTA Section -->
         {% if role and (role.lower() == 'renter' or role.lower() == 'provider') %}
         <div class="provider-cta-section">
             <div class="provider-cta-text">
@@ -89,13 +77,12 @@
         </div>
         {% endif %}
 
-        <!-- New: Dashboard Statistics Grid Section -->
         <div class="dashboard-stats-grid">
             <div class="stat-card">
                 <h3 class="stat-title">Rides Offered</h3>
                 <i class="fas fa-car stat-icon"></i>
-                <p class="stat-value">{{ rides_offered | default(0) }}</p>
-                <p class="stat-description">Dynamic data</p>
+                <p class="stat-value">{{ rides_offered_count | default(0) }}</p> {# Updated to display dynamic count #}
+                <p class="stat-description">Your active ride offers</p>
             </div>
             <div class="stat-card">
                 <h3 class="stat-title">Rides Taken</h3>
@@ -117,7 +104,6 @@
             </div>
         </div>
 
-        <!-- NEWLY MOVED SECTION: Quick Actions -->
         <section class="quick-actions-section">
             <h2 class="quick-actions-heading">Quick Actions</h2>
             <div class="action-grid">
@@ -143,9 +129,6 @@
                 </a>
             </div>
         </section>
-        <!-- END NEWLY MOVED SECTION -->
-
-        <!-- Your Activity Section (now after Quick Actions) -->
         <h2 class="main-activity-title">Your Activity</h2>
         <section class="activity-cards-grid">
             <div class="card discover-adventure-card">
@@ -157,20 +140,30 @@
                     <button type="submit" class="btn btn-primary">Search Rides <i class="fas fa-arrow-right"></i></button>
                 </form>
             </div>
-            <div class="card manage-offers-card">
-                <h3>Manage Your Offers</h3>
-                <p>View, edit, or cancel rides you are offering.</p>
-                <div class="status-placeholder">
-                    <span class="status-tag no-pending-offers"><i class="fas fa-check-circle"></i> No pending offers</span>
-                </div>
-                <a href="#" class="btn btn-secondary-outline">View Offers</a>
+
+            <div class="card active-offers-card">
+                <h3>Your Active Ride Offers</h3>
+                {% if user_rides %}
+                    <ul class="offer-list">
+                        {% for ride in user_rides %}
+                            <li class="offer-item">
+                                <span class="offer-route">{{ ride.start_location }} to {{ ride.end_location }}</span>
+                                <span class="offer-details">Price: ₹{{ "%.2f"|format(ride.price) }} | Seats: {{ ride.seats }} | Booked: {{ 'Yes' if ride.is_booked else 'No' }}</span>
+                                <div class="offer-actions">
+                                    <a href="#" class="btn btn-sm btn-info">Edit</a>
+                                    <a href="#" class="btn btn-sm btn-danger">Cancel</a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="no-offers-message"><i class="fas fa-info-circle"></i> You currently have no active ride offers.</p>
+                    <a href="{{ url_for('post_ride') }}" class="btn btn-secondary-outline">Post a New Ride</a>
+                {% endif %}
             </div>
-        </section>
-        <!-- END Your Activity Section -->
+            </section>
+        </main>
 
-    </main>
-
-    <!-- Main Footer - Consistent across all main pages -->
     <footer class="main-footer section-padding">
         <div class="footer-container container">
             <div class="footer-links-group">
@@ -207,6 +200,5 @@
         <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
     </footer>
 
-    <!-- No specific JavaScript for this header type, as profile dropdown is not present here -->
-</body>
+    </body>
 </html>

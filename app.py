@@ -118,8 +118,11 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    # Fetch rides offered by the current user
+    user_rides = Ride.query.filter_by(creator_id=current_user.id).all()
+    rides_offered_count = len(user_rides) # Calculate the count of rides offered
     # Make sure 'dashboard.html' is in your 'templates' folder
-    return render_template('dashboard.html', name=current_user.username, role=current_user.role)
+    return render_template('dashboard.html', name=current_user.username, role=current_user.role, user_rides=user_rides, rides_offered_count=rides_offered_count) # Pass the count
 
 
 @app.route('/post_ride', methods=['GET', 'POST'])

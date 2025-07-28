@@ -191,15 +191,28 @@ def post_ride():
     return render_template('post_ride.html')
 
 
-@app.route('/find_rides')
+@app.route('/find_rides', methods=['GET'])
 @login_required
 def find_rides():
     if not current_user.can_find_rides:
         flash('You need to activate "Find a Ride" from your dashboard to view and book rides.', 'warning')
         return redirect(url_for('dashboard'))
 
-    # Fetch rides that have at least 1 seat available and are not created by the current user
-    rides = Ride.query.filter(Ride.seats > 0, Ride.creator_id != current_user.id).all()
+    # Start with all available rides not created by the current user
+    rides_query = Ride.query.filter(Ride.seats > 0, Ride.creator_id != current_user.id)
+
+    # Get search parameters from the request
+    start_location = request.args.get('start_location')
+    end_location = request.args.get('end_location')
+
+    # Apply filters if search parameters are provided
+    if start_location:
+        rides_query = rides_query.filter(Ride.start_location.ilike(f'%{start_location}%'))
+    if end_location:
+        rides_query = rides_query.filter(Ride.end_location.ilike(f'%{end_location}%'))
+
+    rides = rides_query.all()
+    
     return render_template('find_rides.html', rides=rides)
 
 

@@ -20,14 +20,16 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}" {% if not can_find_rides %}class="disabled-link" onclick="return false;"{% endif %}>Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}" {% if not can_offer_rides %}class="disabled-link" onclick="return false;"{% endif %}>Post Ride</a></li>
-                        <li><a href="#">My Rides</a></li> </ul>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not can_find_rides %}class="disabled-link"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not can_offer_rides %}class="disabled-link"{% endif %}>Post Ride</a></li>
+                        
+                    </ul>
                 </nav>
                 <div class="header-actions">
                     <button class="notification-bell" aria-label="Notifications">
                         <i class="fas fa-bell"></i>
                     </button>
+                    <a href="{{ url_for('home') }}" class="logout-btn-header">Home</a>
                     <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
                 </div>
             </div>
@@ -68,6 +70,17 @@
                 </div>
             </div>
         </div>
+
+        {# Flash message display block added here #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages-dashboard">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
         {% if role.lower() == 'renter' and not can_offer_rides %}
         <div class="provider-cta-section">

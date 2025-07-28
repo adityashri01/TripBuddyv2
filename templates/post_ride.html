@@ -201,14 +201,16 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link" onclick="return false;"{% endif %}>Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link" onclick="return false;"{% endif %}>Post Ride</a></li>
-                        <li><a href="#">My Rides</a></li> </ul>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link"{% endif %}>Post Ride</a></li>
+                        {# My Rides link removed from here #}
+                    </ul>
                 </nav>
                 <div class="header-actions">
-                    <button class="notification-bell" aria-label="Notifications">
+                    <!-- <button class="notification-bell" aria-label="Notifications">
                         <i class="fas fa-bell"></i>
-                    </button>
+                    </button> -->
+                    <a href="{{ url_for('dashboard') }}" class="logout-btn-header">Dashboard</a>
                     <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
                 </div>
             </div>
@@ -216,6 +218,17 @@
     </header>
 
     <main class="post-ride-main">
+        {# Flash message display block added here #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages-dashboard"> {# Using same class for consistency #}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="post-ride-container">
             {% if not current_user.can_offer_rides %}
                 <div class="activation-required">

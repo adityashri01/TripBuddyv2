@@ -39,6 +39,52 @@
             margin-bottom: 40px;
         }
 
+        /* Search Form Styles */
+        .search-rides-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px; /* Space below the search form */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: center;
+        }
+
+        .search-rides-form input[type="text"] {
+            flex: 1; /* Allow inputs to grow */
+            min-width: 180px; /* Minimum width before wrapping */
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            color: var(--text-dark);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-rides-form input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(41, 121, 255, 0.2);
+            outline: none;
+        }
+
+        .search-rides-form button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-rides-form button:hover {
+            background-color: var(--primary-hover);
+        }
+
+
         .rides-list {
             display: grid;
             gap: 25px;
@@ -200,6 +246,14 @@
             .find-rides-subheading {
                 font-size: 1em;
             }
+            .search-rides-form {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .search-rides-form input[type="text"],
+            .search-rides-form button {
+                width: 100%;
+            }
             .rides-list {
                 grid-template-columns: 1fr; /* Stack cards on small screens */
             }
@@ -232,15 +286,15 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link" onclick="return false;"{% endif %}>Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link" onclick="return false;"{% endif %}>Post Ride</a></li>
-                        <li><a href="#">My Rides</a></li>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link"{% endif %}>Post Ride</a></li>
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button class="notification-bell" aria-label="Notifications">
+                    <!-- <button class="notification-bell" aria-label="Notifications">
                         <i class="fas fa-bell"></i>
-                    </button>
+                    </button> -->
+                    <a href="{{ url_for('dashboard') }}" class="logout-btn-header">Dashboard</a>
                     <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
                 </div>
             </div>
@@ -248,6 +302,17 @@
     </header>
 
     <main class="find-rides-main">
+        {# Flash message display block added here #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages-dashboard"> {# Using same class for consistency #}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="find-rides-container">
             <h1 class="find-rides-heading">Available Rides</h1>
             <p class="find-rides-subheading">Find and book your next trip with ease!</p>
@@ -259,6 +324,13 @@
                     <a href="{{ url_for('dashboard') }}" class="btn-go-dashboard">Go to Dashboard to Activate</a>
                 </div>
             {% else %}
+                {# Search Form #}
+                <form action="{{ url_for('find_rides') }}" method="GET" class="search-rides-form">
+                    <input type="text" name="start_location" placeholder="Starting Location" value="{{ request.args.get('start_location', '') }}">
+                    <input type="text" name="end_location" placeholder="Destination" value="{{ request.args.get('end_location', '') }}">
+                    <button type="submit">Search Rides <i class="fas fa-search"></i></button>
+                </form>
+
                 {% if rides %}
                     <div class="rides-list">
                         {% for ride in rides %}
@@ -278,7 +350,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> No rides currently available. Check back later!</p>
+                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> No rides currently available matching your search. Check back later!</p>
                 {% endif %}
             {% endif %}
         </div>

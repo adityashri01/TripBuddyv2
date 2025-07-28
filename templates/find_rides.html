@@ -302,16 +302,7 @@
     </header>
 
     <main class="find-rides-main">
-        {# Flash message display block added here #}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages-dashboard"> {# Using same class for consistency #}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+    
 
         <div class="find-rides-container">
             <h1 class="find-rides-heading">Available Rides</h1>

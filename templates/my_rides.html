@@ -3,12 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - TripBuddy</title>
+    <title>My Rides - TripBuddy</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"> {# Reusing dashboard CSS for consistency #}
+    <style>
+        .my-rides-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .my-rides-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .my-rides-header h1 {
+            font-size: 2.2em;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .my-rides-header h1 i {
+            margin-right: 10px;
+            color: #007bff;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-buttons .btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .filter-buttons .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+
+        .filter-buttons .btn-secondary {
+            background-color: #f8f9fa;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+
+        .filter-buttons .btn-primary:hover,
+        .filter-buttons .btn-secondary:hover {
+            opacity: 0.9;
+        }
+
+        .filter-buttons .btn.active {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            color: #fff;
+        }
+
+        .rides-list-section {
+            margin-top: 30px;
+        }
+
+        .ride-category-title {
+            font-size: 1.8em;
+            color: #555;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .ride-category-title i {
+            margin-right: 10px;
+            color: #28a745; /* Green for offered rides */
+        }
+        .ride-category-title.rented i {
+            color: #ffc107; /* Orange for rented rides */
+        }
+
+        .ride-card {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ride-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .ride-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .ride-card-header .ride-status {
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .ride-card-header .ride-status.active { background-color: #28a745; } /* Green */
+        .ride-card-header .ride-status.completed { background-color: #6c757d; } /* Gray */
+        .ride-card-header .ride-status.cancelled { background-color: #dc3545; } /* Red */
+        .ride-card-header .ride-status.pending { background-color: #ffc107; } /* Yellow */
+
+        .ride-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .ride-detail-item {
+            background-color: #eff6ff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.95em;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ride-detail-item i {
+            color: #007bff;
+        }
+
+        .ride-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .ride-actions .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .no-rides-message {
+            text-align: center;
+            padding: 40px;
+            background-color: #f0f8ff;
+            border: 1px dashed #cce5ff;
+            border-radius: 8px;
+            color: #0056b3;
+            font-size: 1.1em;
+            margin-top: 30px;
+        }
+        .no-rides-message i {
+            margin-right: 10px;
+            color: #007bff;
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 768px) {
+            .my-rides-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .filter-buttons {
+                width: 100%;
+                justify-content: stretch;
+            }
+            .filter-buttons .btn {
+                flex-grow: 1;
+                text-align: center;
+            }
+            .ride-details-grid {
+                grid-template-columns: 1fr;
+            }
+            .ride-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -20,179 +223,101 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}" {% if not can_find_rides %}class="disabled-link"{% endif %}>Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}" {% if not can_offer_rides %}class="disabled-link"{% endif %}>Post Ride</a></li>
-                        
+                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
                     </ul>
                 </nav>
                 <div class="header-actions">
-    <button class="notification-bell" aria-label="Notifications">
-        <i class="fas fa-bell"></i>
-        <span class="notification-badge" id="notification-count">0</span> </button>
-    <div class="notification-dropdown" id="notification-dropdown">
-        <div class="dropdown-header">
-            <h3>Notifications</h3>
-            <span class="mark-all-read" id="mark-all-read">Mark all as read</span>
-        </div>
-        <div class="notification-list" id="notification-list">
-            <p class="no-notifications-message">No new notifications.</p>
-        </div>
-        <div class="dropdown-footer">
-            <a href="#">View All Notifications</a>
-        </div>
-    </div>
-    <a href="{{ url_for('home') }}" class="logout-btn-header">Home</a>
-    <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
-</div>
+                    <button class="notification-bell" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notification-count">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notification-dropdown">
+                        <div class="dropdown-header">
+                            <h3>Notifications</h3>
+                            <span class="mark-all-read" id="mark-all-read">Mark all as read</span>
+                        </div>
+                        <div class="notification-list" id="notification-list">
+                            <p class="no-notifications-message">No new notifications.</p>
+                        </div>
+                        <div class="dropdown-footer">
+                            <a href="#">View All Notifications</a>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('dashboard') }}" class="logout-btn-header">Dashboard</a>
+                    <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
+                </div>
             </div>
         </div>
     </header>
 
     <main>
-        <div class="dashboard-content">
-            <h1 class="welcome-heading">Welcome, {{ name }}!</h1>
-            
-            <div class="user-summary-section">
-                <div class="user-avatar-placeholder">
-                    <i class="fas fa-user-circle"></i> </div>
-                <div class="user-details">
-                    <p class="logged-in-as"><i class="fas fa-info-circle info-icon"></i> You are logged in as a:</p>
-                    <p class="user-role-display">
-                        {% if role == 'Renter' %}
-                            <i class="fas fa-user-tag role-icon"></i> Renter
-                        {% elif role == 'Provider' %}
-                            <i class="fas fa-car-side role-icon"></i> Provider
-                        {% elif role == 'Renter, Provider' %}
-                            <i class="fas fa-handshake role-icon"></i> Renter & Provider
-                        {% else %}
-                            <i class="fas fa-user role-icon"></i> {{ role }} {% endif %}
-                    </p>
-                    <p class="user-email-display"><i class="fas fa-envelope email-icon"></i> {{ current_user.email }}</p>
-                    
-                    <p class="user-meta-info"><i class="fas fa-clock meta-icon"></i> Last Login: {{ current_user.last_login_date | default('N/A') }}</p>
-                    <p class="user-meta-info">
-                        {% if current_user.is_email_verified %}
-                            <i class="fas fa-check-circle verified-icon"></i> Email Verified
-                        {% else %}
-                            <i class="fas fa-exclamation-triangle unverified-icon"></i> Email Not Verified (<a href="#" class="verify-link">Verify Now</a>)
-                        {% endif %}
-                    </p>
-
-                    <a href="#" class="edit-profile-link"><i class="fas fa-edit"></i> Edit Profile</a>
+        <div class="my-rides-container">
+            <div class="my-rides-header">
+                <h1><i class="fas fa-history"></i> My Ride History</h1>
+                <div class="filter-buttons">
+                    <a href="{{ url_for('my_rides', filter='all') }}" class="btn {% if filter == 'all' %}btn-primary active{% else %}btn-secondary{% endif %}">All Rides</a>
+                    <a href="{{ url_for('my_rides', filter='offered') }}" class="btn {% if filter == 'offered' %}btn-primary active{% else %}btn-secondary{% endif %}">Offered Rides</a>
+                    <a href="{{ url_for('my_rides', filter='rented') }}" class="btn {% if filter == 'rented' %}btn-primary active{% else %}btn-secondary{% endif %}">Rented Rides</a>
                 </div>
             </div>
-        </div>
 
-        
-
-        {% if role.lower() == 'renter' and not can_offer_rides %}
-        <div class="provider-cta-section">
-            <div class="provider-cta-text">
-                <h2>Want to Offer Rides?</h2>
-                <p>Activate this feature to start sharing your journey and earning.</p>
-            </div>
-            <form action="{{ url_for('activate_offer_rides') }}" method="POST">
-                <button type="submit" class="become-provider-btn">Activate Offer Rides</button>
-            </form>
-        </div>
-        {% elif role.lower() == 'provider' and not can_find_rides %}
-        <div class="provider-cta-section">
-            <div class="provider-cta-text">
-                <h2>Want to Book a Ride?</h2>
-                <p>Activate this feature to find and book rides offered by others.</p>
-            </div>
-            <form action="{{ url_for('activate_find_rides') }}" method="POST">
-                <button type="submit" class="become-provider-btn">Activate Find Rides</button>
-            </form>
-        </div>
-        {% endif %}
-
-        <div class="dashboard-stats-grid">
-            <div class="stat-card">
-                <h3 class="stat-title">Rides Offered</h3>
-                <i class="fas fa-car stat-icon"></i>
-                <p class="stat-value">{{ rides_offered_count | default(0) }}</p>
-                <p class="stat-description">Your active ride offers</p>
-            </div>
-            <div class="stat-card">
-                <h3 class="stat-title">Rides Taken</h3>
-                <i class="fas fa-road stat-icon"></i>
-                <p class="stat-value">{{ rides_taken_count | default(0) }}</p>
-                <p class="stat-description">Seats booked by you</p>
-            </div>
-            <div class="stat-card">
-                <h3 class="stat-title">Average Rating</h3>
-                <i class="fas fa-star stat-icon"></i>
-                <p class="stat-value">{{ average_rating | default('N/A') }}</p>
-                <p class="stat-description">Dynamic data</p>
-            </div>
-            <div class="stat-card">
-                <h3 class="stat-title">Wallet Balance</h3>
-                <i class="fas fa-wallet stat-icon"></i>
-                <p class="stat-value">{{ wallet_balance | default('0.00') }}</p>
-                <p class="stat-description">Dynamic data</p>
-            </div>
-        </div>
-
-        <section class="quick-actions-section">
-            <h2 class="quick-actions-heading">Quick Actions</h2>
-            <div class="action-grid">
-                <a href="{{ url_for('find_rides') }}" class="action-card {% if not can_find_rides %}disabled-card{% endif %}">
-                    <i class="fas fa-search action-icon"></i>
-                    <p class="action-text">Find a Ride</p>
-                </a>
-                <a href="{{ url_for('post_ride') }}" class="action-card {% if not can_offer_rides %}disabled-card{% endif %}">
-                    <i class="fas fa-plus-circle action-icon"></i>
-                    <p class="action-text">Offer a Ride</p>
-                </a>
-                <a href="{{ url_for('my_rides') }}" class="action-card">
-                    <i class="fas fa-history action-icon"></i>
-                    <p class="action-text">Ride History</p>
-                </a>
-                <a href="#" class="action-card">
-                    <i class="fas fa-comments action-icon"></i>
-                    <p class="action-text">Messages</p>
-                </a>
-                <a href="#" class="action-card">
-                    <i class="fas fa-cog action-icon"></i>
-                    <p class="action-text">Settings</p>
-                </a>
-            </div>
-        </section>
-        <h2 class="main-activity-title">Your Activity</h2>
-        <section class="activity-cards-grid">
-            <div class="card discover-adventure-card">
-                <h3>Discover Your Next Adventure</h3>
-                <p>Search for available rides or connect with fellow travelers.</p>
-                <form class="search-ride-form">
-                    <input type="text" placeholder="From where?" class="form-input">
-                    <input type="text" placeholder="To where?" class="form-input">
-                    <button type="submit" class="btn btn-primary">Search Rides <i class="fas fa-arrow-right"></i></button>
-                </form>
-            </div>
-
-            <div class="card active-offers-card">
-                <h3>Your Active Ride Offers</h3>
-                {% if user_rides %}
-                    <ul class="offer-list">
-                        {% for ride in user_rides %}
-                            <li class="offer-item">
-                                <span class="offer-route">{{ ride.start_location }} to {{ ride.end_location }}</span>
-                                <span class="offer-details">Price: ₹{{ "%.2f"|format(ride.price) }} | Available Seats: {{ ride.seats }}</span>
-                                <div class="offer-actions">
-                                    <a href="#" class="btn btn-sm btn-info">Edit</a>
-                                    <a href="#" class="btn btn-sm btn-danger">Cancel</a>
+            <section class="rides-list-section">
+                {% if offered_rides or rented_rides %}
+                    {% if offered_rides and (filter == 'all' or filter == 'offered') %}
+                        <h2 class="ride-category-title"><i class="fas fa-car-side"></i> Your Offered Rides</h2>
+                        {% for ride in offered_rides %}
+                            <div class="ride-card">
+                                <div class="ride-card-header">
+                                    <span>{{ ride.start_location }} to {{ ride.end_location }}</span>
+                                    <span class="ride-status {{ ride.status_class }}">{{ ride.status }}</span>
                                 </div>
-                            </li>
+                                <div class="ride-details-grid">
+                                    <div class="ride-detail-item"><i class="fas fa-calendar-alt"></i> {{ ride.date.strftime('%Y-%m-%d') }}</div>
+                                    <div class="ride-detail-item"><i class="fas fa-clock"></i> {{ ride.time }}</div>
+                                    <div class="ride-detail-item"><i class="fas fa-users"></i> Seats: {{ ride.seats_available }} / {{ ride.total_seats }}</div>
+                                    <div class="ride-detail-item"><i class="fas fa-tag"></i> Price: ₹{{ "%.2f"|format(ride.price) }}</div>
+                                </div>
+                                <div class="ride-actions">
+                                    <a href="{{ url_for('edit_ride', ride_id=ride.id) }}" class="btn btn-info">Edit</a>
+                                    <a href="{{ url_for('cancel_ride', ride_id=ride.id) }}" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </div>
                         {% endfor %}
-                    </ul>
+                    {% elif filter == 'offered' %}
+                        <p class="no-rides-message"><i class="fas fa-info-circle"></i> You have not offered any rides yet.</p>
+                    {% endif %}
+
+                    {% if rented_rides and (filter == 'all' or filter == 'rented') %}
+                        <h2 class="ride-category-title rented"><i class="fas fa-road"></i> Your Rented Rides</h2>
+                        {% for booking in rented_rides %}
+                            <div class="ride-card">
+                                <div class="ride-card-header">
+                                    <span>{{ booking.ride.start_location }} to {{ booking.ride.end_location }}</span>
+                                    <span class="ride-status {{ booking.status_class }}">{{ booking.status }}</span>
+                                </div>
+                                <div class="ride-details-grid">
+                                    <div class="ride-detail-item"><i class="fas fa-calendar-alt"></i> {{ booking.ride.date.strftime('%Y-%m-%d') }}</div>
+                                    <div class="ride-detail-item"><i class="fas fa-clock"></i> {{ booking.ride.time }}</div>
+                                    <div class="ride-detail-item"><i class="fas fa-user"></i> Driver: {{ booking.ride.driver.username }}</div>
+                                    <div class="ride-detail-item"><i class="fas fa-ticket-alt"></i> Seats Booked: {{ booking.seats_booked }} / {{ booking.ride.seats }}</div>>
+                                    <div class="ride-detail-item"><i class="fas fa-money-bill-wave"></i> Total Paid: ₹{{ "%.2f"|format(booking.total_price) }}</div>
+                                </div>
+                                <div class="ride-actions">
+                                    <a href="{{ url_for('view_booking_details', booking_id=booking.id) }}" class="btn btn-info">View Details</a>
+                                    <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}" class="btn btn-danger">Cancel Booking</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% elif filter == 'rented' %}
+                        <p class="no-rides-message"><i class="fas fa-info-circle"></i> You have not rented any rides yet.</p>
+                    {% endif %}
                 {% else %}
-                    <p class="no-offers-message"><i class="fas fa-info-circle"></i> You currently have no active ride offers.</p>
-                    <a href="{{ url_for('post_ride') }}" class="btn btn-secondary-outline">Post a New Ride</a>
+                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> You have no ride history yet. Start by <a href="{{ url_for('find_rides') }}">finding a ride</a> or <a href="{{ url_for('post_ride') }}">offering one</a>!</p>
                 {% endif %}
-            </div>
             </section>
-        </main>
+        </div>
+    </main>
 
     <footer class="main-footer section-padding">
         <div class="footer-container container">
@@ -229,8 +354,7 @@
         </div>
         <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
     </footer>
-
-     <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const notificationBell = document.querySelector('.notification-bell');
             const notificationDropdown = document.getElementById('notification-dropdown');
@@ -415,6 +539,5 @@
             // setInterval(fetchNotifications, 60000); // Fetch every minute
         });
     </script>
-
-    </body>
+</body>
 </html>

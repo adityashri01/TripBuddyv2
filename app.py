@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import func
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify 
 from flask_login import (
     LoginManager, login_user, login_required,
@@ -6,7 +7,7 @@ from flask_login import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from models import db, User, Ride, Notification 
+from models import db, User, Ride, Notification, Booking
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tripbuddy.db'
@@ -330,6 +331,84 @@ def book_ride(ride_id):
 
     flash(f'{requested_seats} seat(s) on the ride from {ride.start_location} to {ride.end_location} booked successfully!', 'success')
     return redirect(url_for('dashboard'))
+
+
+@app.route('/my_rides')
+@login_required
+def my_rides():
+    filter_param = request.args.get('filter', 'all')
+
+    offered_rides = []
+    rented_rides = []
+
+    print(f"DEBUG: Current user ID: {current_user.id}") # ADD THIS DEBUG LINE
+
+    if filter_param == 'all' or filter_param == 'offered':
+        offered_rides_raw = Ride.query.filter_by(creator_id=current_user.id).order_by(Ride.date.desc(), Ride.time.desc()).all()
+        for ride in offered_rides_raw:
+            booked_seats_sum = db.session.query(func.sum(Booking.seats_booked)).filter(Booking.ride_id == ride.id, Booking.status == 'confirmed').scalar()
+            booked_seats_sum = booked_seats_sum if booked_seats_sum is not None else 0
+            ride.seats_available = ride.seats - booked_seats_sum
+            ride.total_seats = ride.seats
+            if ride.status == 'active':
+                ride.status_class = 'active'
+            elif ride.status == 'completed':
+                ride.status_class = 'completed'
+            elif ride.status == 'cancelled':
+                ride.status_class = 'cancelled'
+            else:
+                ride.status_class = 'pending'
+            offered_rides.append(ride)
+        print(f"DEBUG: Offered rides found: {len(offered_rides)}") # ADD THIS DEBUG LINE
+
+
+    if filter_param == 'all' or filter_param == 'rented':
+        rented_rides = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.booking_date.desc()).all()
+        print(f"DEBUG: Rented rides found: {len(rented_rides)}") # ADD THIS DEBUG LINE
+        for booking in rented_rides:
+            if booking.status == 'confirmed':
+                booking.status_class = 'active'
+            elif booking.status == 'completed':
+                booking.status_class = 'completed'
+            elif booking.status == 'cancelled':
+                booking.status_class = 'cancelled'
+            else:
+                booking.status_class = 'pending'
+
+
+    return render_template(
+        'my_rides.html',
+        offered_rides=offered_rides,
+        rented_rides=rented_rides,
+        filter=filter_param
+    )
+
+# Placeholder routes for ride actions (keep these)
+@app.route('/edit_ride/<int:ride_id>')
+@login_required
+def edit_ride(ride_id):
+    flash(f'Edit ride {ride_id} functionality not yet implemented.', 'info')
+    return redirect(url_for('my_rides'))
+
+@app.route('/cancel_ride/<int:ride_id>')
+@login_required
+def cancel_ride(ride_id):
+    flash(f'Cancel ride {ride_id} functionality not yet implemented.', 'info')
+    return redirect(url_for('my_rides'))
+
+@app.route('/view_booking_details/<int:booking_id>')
+@login_required
+def view_booking_details(booking_id):
+    flash(f'View booking details for {booking_id} functionality not yet implemented.', 'info')
+    return redirect(url_for('my_rides'))
+
+@app.route('/cancel_booking/<int:booking_id>')
+@login_required
+def cancel_booking(booking_id):
+    flash(f'Cancel booking {booking_id} functionality not yet implemented.', 'info')
+    return redirect(url_for('my_rides'))
+
+
 
 
 if __name__ == "__main__":

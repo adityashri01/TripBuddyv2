@@ -114,7 +114,8 @@
     position: absolute;
     top: 60px; /* Adjust based on your header height */
     right: 20px; /* Align with the bell icon */
-    background-color: var(--card-bg);
+    background-color: black;
+    color: white;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -436,6 +437,11 @@ main {
 .user-details .user-email-display {
     font-size: 1em;
     color: #777;
+}
+
+/* Add spacing between the icons and the text */
+.user-details i {
+    margin-right: 8px;
 }
 
 /* Styling for the new icons within user-details */

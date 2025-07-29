@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with {{ other_user.username }} | TripBuddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        /* Specific styles for the chat page */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            height: calc(100vh - 120px);
+            margin: 60px auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background-color: var(--background-light);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: var(--poppins);
+            border-bottom: 1px solid var(--dark-blue-hover);
+        }
+
+        .chat-header h1 {
+            font-size: 1.4em;
+            margin: 0;
+        }
+
+        .chat-header .back-btn {
+            color: var(--text-white);
+            font-size: 1.5em;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .chat-header .back-btn:hover {
+            transform: translateX(-5px);
+        }
+
+        .messages-list {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #f9f9f9;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-size: 0.95em;
+        }
+
+        .message p {
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .message .timestamp {
+            display: block;
+            font-size: 0.7em;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .sent {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            border-bottom-right-radius: 5px;
+        }
+
+        .sent p {
+            color: var(--text-white);
+        }
+
+        .sent .timestamp {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .received {
+            align-self: flex-start;
+            background-color: #f1f0f0;
+            border-bottom-left-radius: 5px;
+        }
+
+        .received .timestamp {
+            text-align: left;
+        }
+
+        .message-form {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            background-color: var(--background-light);
+            gap: 10px;
+        }
+
+        .message-form input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        .message-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .message-form button {
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .message-form button:hover {
+            background-color: var(--dark-blue-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="chat-container">
+            <div class="chat-header">
+                <a href="{{ url_for('my_rides') }}" class="back-btn" aria-label="Back to My Rides"><i class="fas fa-arrow-left"></i></a>
+                <h1>Chat with {{ other_user.username }}</h1>
+            </div>
+            <div class="messages-list" id="messages-list">
+                <!-- Messages will be injected here by JavaScript -->
+            </div>
+            <form id="message-form" class="message-form">
+                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                <input type="hidden" id="ride-id" value="{{ ride.id }}">
+                <input type="hidden" id="current-user-id" value="{{ current_user.id }}">
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/messaging.js') }}"></script>
+</body>
+</html>

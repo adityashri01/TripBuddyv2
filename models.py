@@ -2,6 +2,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime # Import datetime for timestamps
+import uuid # Import uuid for generating unique tokens
 
 db = SQLAlchemy()
 
@@ -9,17 +10,19 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    role = db.Column(db.String(20), nullable=False) # e.g., 'Renter', 'Provider'
+    password = db.Column(db.String(255), nullable=False)
+    phone_number = db.Column(db.String(20), unique=True, nullable=True) # New field for phone number
+    role = db.Column(db.String(20), nullable=False)
     rides_created = db.relationship('Ride', backref='creator', lazy=True)
     rides_taken = db.Column(db.Integer, default=0, nullable=False)
-    # New fields for activation
     can_offer_rides = db.Column(db.Boolean, default=False, nullable=False)
     can_find_rides = db.Column(db.Boolean, default=False, nullable=False)
-    # Add relationship to notifications received by this user
     received_notifications = db.relationship('Notification', backref='recipient', lazy=True, foreign_keys='Notification.user_id')
-
-
+    is_email_verified = db.Column(db.Boolean, default=False, nullable=False)
+    email_verification_token = db.Column(db.String(36), unique=True, nullable=True)
+    email_verification_token_expiration = db.Column(db.DateTime, nullable=True)
+    last_login_date = db.Column(db.DateTime, nullable=True)
+    
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -33,7 +36,6 @@ class Ride(db.Model):
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.String(20), nullable=False) # Store time as string (e.g., "10:00 AM")
     description = db.Column(db.Text, nullable=True)
-
     def __repr__(self):
         return f'<Ride {self.id} from {self.start_location} to {self.end_location}>'
 
@@ -49,10 +51,8 @@ class Notification(db.Model):
     # You might want to add a reference to a related object, e.g., ride_id
     ride_id = db.Column(db.Integer, db.ForeignKey('ride.id'), nullable=True)
     ride = db.relationship('Ride', backref='notifications', lazy=True) # Back-reference to the ride
-
     def __repr__(self):
         return f'<Notification {self.id} for User {self.user_id}: {self.message[:30]}...>'
-
     def to_dict(self):
         """Converts the notification object to a dictionary for JSON serialization."""
         return {
@@ -60,7 +60,7 @@ class Notification(db.Model):
             'user_id': self.user_id,
             'sender_id': self.sender_id,
             'message': self.message,
-            'type': self.type,
+            'type': self.type, # This is the key the JS expects
             'is_read': self.is_read,
             'timestamp': self.timestamp.isoformat() + 'Z', # ISO format for JS compatibility
             'ride_id': self.ride_id

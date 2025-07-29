@@ -28,7 +28,9 @@
                 <div class="header-actions">
     <button class="notification-bell" aria-label="Notifications">
         <i class="fas fa-bell"></i>
-        <span class="notification-badge" id="notification-count">0</span> </button>
+        <!-- IMPORTANT: Added inline style for visibility debugging. You can remove this after confirming it works. -->
+        <span class="notification-badge" id="notification-count" style="display: none; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75em; position: absolute; top: -5px; right: -5px;">0</span>
+    </button>
     <div class="notification-dropdown" id="notification-dropdown">
         <div class="dropdown-header">
             <h3>Notifications</h3>
@@ -52,35 +54,35 @@
         <div class="dashboard-content">
             <h1 class="welcome-heading">Welcome, {{ name }}!</h1>
 
-            <div class="user-summary-section">
-                <div class="user-avatar-placeholder">
-                    <i class="fas fa-user-circle"></i> </div>
-                <div class="user-details">
-                    <p class="logged-in-as"><i class="fas fa-info-circle info-icon"></i> You are logged in as a:</p>
-                    <p class="user-role-display">
-                        {% if role == 'Renter' %}
-                            <i class="fas fa-user-tag role-icon"></i> Renter
-                        {% elif role == 'Provider' %}
-                            <i class="fas fa-car-side role-icon"></i> Provider
-                        {% elif role == 'Renter, Provider' %}
-                            <i class="fas fa-handshake role-icon"></i> Renter & Provider
-                        {% else %}
-                            <i class="fas fa-user role-icon"></i> {{ role }} {% endif %}
-                    </p>
-                    <p class="user-email-display"><i class="fas fa-envelope email-icon"></i> {{ current_user.email }}</p>
+<div class="user-summary-section">
+    <div class="user-avatar-placeholder">
+        <i class="fas fa-user-circle"></i> </div>
+    <div class="user-details">
+        <p class="logged-in-as"><i class="fas fa-info-circle info-icon"></i> You are logged in as a:</p>
+        <p class="user-role-display">
+            {% if role == 'Renter' %}
+                <i class="fas fa-user-tag role-icon"></i> Renter
+            {% elif role == 'Provider' %}
+                <i class="fas fa-car-side role-icon"></i> Provider
+            {% elif role == 'Renter, Provider' %}
+                <i class="fas fa-handshake role-icon"></i> Renter & Provider
+            {% else %}
+                <i class="fas fa-user role-icon"></i> {{ role }} {% endif %}
+        </p>
+        <p class="user-email-display"><i class="fas fa-envelope email-icon"></i> {{ current_user.email }}</p>
+        <p class="user-phone-display"><i class="fas fa-phone-alt phone-icon"></i> {{ current_user.phone_number }}</p>
+        <p class="user-meta-info"><i class="fas fa-clock meta-icon"></i> Last Login: {{ last_login_date.strftime('%Y-%m-%d %H:%M:%S') if last_login_date else 'N/A' }}</p>
+        <p class="user-meta-info">
+            {% if is_email_verified %}
+                <i class="fas fa-check-circle verified-icon"></i> Email Verified
+            {% else %}
+                <i class="fas fa-exclamation-triangle unverified-icon"></i> Email Not Verified (<a href="{{ url_for('login') }}" class="verify-link">Resend Verification Email</a>)
+            {% endif %}
+        </p>
 
-                    <p class="user-meta-info"><i class="fas fa-clock meta-icon"></i> Last Login: {{ current_user.last_login_date | default('N/A') }}</p>
-                    <p class="user-meta-info">
-                        {% if current_user.is_email_verified %}
-                            <i class="fas fa-check-circle verified-icon"></i> Email Verified
-                        {% else %}
-                            <i class="fas fa-exclamation-triangle unverified-icon"></i> Email Not Verified (<a href="#" class="verify-link">Verify Now</a>)
-                        {% endif %}
-                    </p>
-
-                    <a href="#" class="edit-profile-link"><i class="fas fa-edit"></i> Edit Profile</a>
-                </div>
-            </div>
+        <a href="#" class="edit-profile-link"><i class="fas fa-edit"></i> Edit Profile</a>
+    </div>
+</div>
         </div>
 
 
@@ -149,11 +151,11 @@
                     <i class="fas fa-history action-icon"></i>
                     <p class="action-text">My Rides</p>
                 </a>
-                <a href="#" class="action-card">
+                <a href="{{ url_for('contact') }}" class="action-card">
                     <i class="fas fa-comments action-icon"></i>
-                    <p class="action-text">Messages</p>
+                    <p class="action-text">Help</p>
                 </a>
-                <a href="#" class="action-card">
+                <a href="{{ url_for('settings') }}" class="action-card">
                     <i class="fas fa-cog action-icon"></i>
                     <p class="action-text">Settings</p>
                 </a>
@@ -164,9 +166,9 @@
             <div class="card discover-adventure-card">
                 <h3>Discover Your Next Adventure</h3>
                 <p>Search for available rides or connect with fellow travelers.</p>
-                <form class="search-ride-form">
-                    <input type="text" placeholder="From where?" class="form-input">
-                    <input type="text" placeholder="To where?" class="form-input">
+                <form class="search-ride-form" action="{{ url_for('find_rides') }}" method="GET">
+                    <input type="text" name="origin" placeholder="From where?" class="form-input">
+                    <input type="text" name="destination" placeholder="To where?" class="form-input">
                     <button type="submit" class="btn btn-primary">Search Rides <i class="fas fa-arrow-right"></i></button>
                 </form>
             </div>
@@ -206,7 +208,7 @@
             </div>
             <div class="footer-contact-group">
                 <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-envelope"></i> Email: tripbuddy898@gmail.com</p>
                 <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
                 <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
             </div>
@@ -230,191 +232,169 @@
         <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
     </footer>
 
+    <!-- Include Socket.IO client library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+
      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const notificationBell = document.querySelector('.notification-bell');
-            const notificationDropdown = document.getElementById('notification-dropdown');
-            const notificationCountBadge = document.getElementById('notification-count');
-            const notificationList = document.getElementById('notification-list');
-            const markAllReadBtn = document.getElementById('mark-all-read');
-            const noNotificationsMessage = notificationList.querySelector('.no-notifications-message'); // Get the placeholder message
+       document.addEventListener('DOMContentLoaded', function() {
+    const notificationBell = document.querySelector('.notification-bell');
+    const notificationDropdown = document.getElementById('notification-dropdown');
+    const notificationList = document.getElementById('notification-list');
+    const notificationCountSpan = document.getElementById('notification-count');
+    const markAllReadButton = document.getElementById('mark-all-read');
 
-            let notifications = []; // This will now be populated from the backend
+    // Initialize Socket.IO connection
+    const socket = io(); // Connects to the current host/port
 
-            // Helper function to format timestamps
-            function formatTimestamp(isoString) {
-                const date = new Date(isoString);
-                const now = new Date();
-                const diffMs = now - date;
-                const diffSeconds = Math.round(diffMs / 1000);
-                const diffMinutes = Math.round(diffSeconds / 60);
-                const diffHours = Math.round(diffMinutes / 60);
-                const diffDays = Math.round(diffHours / 24);
-                const diffMonths = Math.round(diffDays / 30.44); // Average days in a month
-                const diffYears = Math.round(diffDays / 365.25);
+    socket.on('connect', function() {
+        console.log('Connected to Socket.IO server');
+    });
 
-                if (diffSeconds < 60) {
-                    return `${diffSeconds} second${diffSeconds === 1 ? '' : 's'} ago`;
-                } else if (diffMinutes < 60) {
-                    return `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
-                } else if (diffHours < 24) {
-                    return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-                } else if (diffDays < 7) {
-                    return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
-                } else if (diffMonths < 12) {
-                    return `${diffMonths} month${diffMonths === 1 ? '' : 's'} ago`;
-                } else {
-                    return `${diffYears} year${diffYears === 1 ? '' : 's'} ago`;
-                }
-            }
+    // Listen for new_notification events from the server
+    socket.on('new_notification', function(data) {
+        console.log('New notification received via Socket.IO:', data);
+        // Re-fetch and render all notifications to update the count and list
+        fetchAndRenderNotifications();
+    });
 
-            // Function to fetch notifications from the backend
-            async function fetchNotifications() {
-                try {
-                    const response = await fetch('/api/notifications');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    notifications = await response.json();
-                    renderNotifications();
-                } catch (error) {
-                    console.error('Error fetching notifications:', error);
-                    // Optionally display an error message to the user
-                    notificationList.innerHTML = '<p class="no-notifications-message" style="color:red;">Failed to load notifications.</p>';
-                    updateNotificationCount(0); // Hide badge on error
-                }
-            }
+    socket.on('disconnect', function() {
+        console.log('Disconnected from Socket.IO server');
+    });
 
-            // Function to render notifications
-            function renderNotifications() {
-                notificationList.innerHTML = ''; // Clear existing notifications
+
+    // Function to fetch and render notifications
+    async function fetchAndRenderNotifications() {
+        try {
+            const response = await fetch('/api/notifications');
+            const notifications = await response.json();
+            
+            // Clear existing notifications
+            notificationList.innerHTML = '';
+            
+            if (notifications.length === 0) {
+                notificationList.innerHTML = '<p class="no-notifications-message">No new notifications.</p>';
+                notificationCountSpan.style.display = 'none'; // Hide if no notifications
+            } else {
                 let unreadCount = 0;
-
-                if (notifications.length === 0 || notifications.every(notif => notif.is_read)) {
-                    // Show "No new notifications" only if there are no notifications or all are read
-                    if (noNotificationsMessage) { // Ensure the element exists
-                        notificationList.appendChild(noNotificationsMessage.cloneNode(true)); // Clone to re-add it
-                    } else {
-                        const message = document.createElement('p');
-                        message.classList.add('no-notifications-message');
-                        message.textContent = 'No new notifications.';
-                        notificationList.appendChild(message);
-                    }
-                    updateNotificationCount(0);
-                    return;
-                }
-
                 notifications.forEach(notif => {
-                    if (!notif.is_read) { // Use is_read from backend
-                        unreadCount++;
-                    }
                     const notificationItem = document.createElement('div');
                     notificationItem.classList.add('notification-item');
-                    if (!notif.is_read) { // Use is_read for class
+                    if (!notif.is_read) {
                         notificationItem.classList.add('unread');
+                        unreadCount++;
                     }
-                    notificationItem.dataset.id = notif.id; // Store ID for easy access
+                    notificationItem.dataset.id = notif.id;
 
-                    notificationItem.innerHTML = `
-                        <div class="notification-item-header">
-                            <span class="notification-type">${notif.type || 'General'}</span>
-                            <span class="timestamp">${formatTimestamp(notif.timestamp)}</span>
-                        </div>
-                        <div class="notification-item-content">
-                            ${notif.message}
-                        </div>
-                    `;
+                    const notificationHeader = document.createElement('div');
+                    notificationHeader.classList.add('notification-item-header');
+
+                    const notificationType = document.createElement('span');
+                    notificationType.classList.add('notification-type');
+                    notificationType.textContent = notif.type; 
+
+                    const notificationTimestamp = document.createElement('span');
+                    notificationTimestamp.classList.add('timestamp');
+                    notificationTimestamp.textContent = new Date(notif.timestamp).toLocaleString();
+
+                    const notificationContent = document.createElement('div');
+                    notificationContent.classList.add('notification-item-content');
+                    notificationContent.textContent = notif.message;
+
+                    notificationHeader.appendChild(notificationType);
+                    notificationHeader.appendChild(notificationTimestamp);
+                    notificationItem.appendChild(notificationHeader);
+                    notificationItem.appendChild(notificationContent);
                     notificationList.appendChild(notificationItem);
 
-                    // Add click listener to mark as read
-                    notificationItem.addEventListener('click', async function() {
-                        if (!notif.is_read) { // Only try to mark as read if it's currently unread
-                            await markNotificationAsRead(notif.id);
+                    // Add click listener to mark individual notification as read
+                    notificationItem.addEventListener('click', async () => {
+                        if (!notif.is_read) { // Only mark as read if it's unread
+                            try {
+                                const markReadResponse = await fetch(`/api/notifications/${notif.id}/mark_read`, {
+                                    method: 'POST',
+                                });
+                                if (markReadResponse.ok) {
+                                    // Update UI directly for this item
+                                    notificationItem.classList.remove('unread');
+                                    // Decrement unreadCount and update badge immediately
+                                    unreadCount--; 
+                                    notificationCountSpan.textContent = unreadCount;
+                                    // Ensure badge visibility is updated after decrementing
+                                    if (unreadCount === 0) {
+                                        notificationCountSpan.style.display = 'none';
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('Error marking notification as read:', error);
+                            }
                         }
                     });
                 });
 
-                updateNotificationCount(unreadCount);
-            }
+                console.log('Calculated unreadCount:', unreadCount);
 
-            // Function to update the notification count badge
-            function updateNotificationCount(count) {
-                if (count > 0) {
-                    notificationCountBadge.textContent = count;
-                    notificationCountBadge.style.display = 'block';
+                // Update the unread count and badge visibility
+                notificationCountSpan.textContent = unreadCount;
+                if (unreadCount > 0) {
+                    notificationCountSpan.style.display = 'block'; // Ensure it's visible if count > 0
                 } else {
-                    notificationCountBadge.style.display = 'none';
+                    notificationCountSpan.style.display = 'none'; // Hide if count is 0
                 }
             }
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+            notificationList.innerHTML = '<p class="no-notifications-message">Failed to load notifications.</p>';
+        }
+    }
 
-            // Function to mark a single notification as read on the backend
-            async function markNotificationAsRead(id) {
-                try {
-                    const response = await fetch(`/api/notifications/${id}/mark_read`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    if (response.ok) {
-                        const notification = notifications.find(n => n.id === id);
-                        if (notification) {
-                            notification.is_read = true; // Update local state
-                            renderNotifications(); // Re-render to update UI
-                        }
-                    } else {
-                        console.error('Failed to mark notification as read:', await response.text());
-                    }
-                } catch (error) {
-                    console.error('Error marking notification as read:', error);
-                }
+    // Toggle dropdown visibility, only if elements exist
+    if (notificationBell && notificationDropdown) {
+        notificationBell.addEventListener('click', () => {
+            notificationDropdown.classList.toggle('show');
+            // Fetch notifications every time the bell is clicked
+            if (notificationDropdown.classList.contains('show')) {
+                fetchAndRenderNotifications();
             }
-
-            // Function to mark all notifications as read on the backend
-            markAllReadBtn.addEventListener('click', async function() {
-                try {
-                    const response = await fetch('/api/notifications/mark_all_read', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    if (response.ok) {
-                        notifications.forEach(notif => {
-                            notif.is_read = true; // Update local state
-                        });
-                        renderNotifications();
-                    } else {
-                        console.error('Failed to mark all notifications as read:', await response.text());
-                    }
-                } catch (error) {
-                    console.error('Error marking all notifications as read:', error);
-                }
-            });
-
-            // Toggle dropdown visibility and fetch notifications
-            notificationBell.addEventListener('click', async function(event) {
-                notificationDropdown.classList.toggle('show');
-                if (notificationDropdown.classList.contains('show')) {
-                    await fetchNotifications(); // Fetch and render when dropdown opens
-                }
-                event.stopPropagation();
-            });
-
-            // Close dropdown if clicked outside
-            document.addEventListener('click', function(event) {
-                if (!notificationDropdown.contains(event.target) && !notificationBell.contains(event.target)) {
-                    notificationDropdown.classList.remove('show');
-                }
-            });
-
-            // Initial fetch of notifications when page loads
-            fetchNotifications();
-
-            // Optional: Periodically fetch notifications (e.g., every 60 seconds)
-            // setInterval(fetchNotifications, 60000); // Fetch every minute
         });
-    </script>
+    }
 
-    </body>
+
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', (event) => {
+        if (notificationBell && notificationDropdown && !notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.classList.remove('show');
+        }
+    });
+
+    // Mark all as read functionality, only if element exists
+    if (markAllReadButton) {
+        markAllReadButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/notifications/mark_all_read', {
+                    method: 'POST',
+                });
+                if (response.ok) {
+                    // Re-fetch and render notifications to update the UI
+                    fetchAndRenderNotifications();
+                    flashMessage('All notifications marked as read!', 'success');
+                }
+            } catch (error) {
+                    console.error('Error marking all as read:', error);
+            }
+        });
+    }
+    
+    // Function to add a flash message (assuming a simple implementation)
+    function flashMessage(message, type) {
+        // You would need to implement this function to display a message to the user.
+        // A simple alert or a toast notification library could be used.
+        console.log(`Flash (${type}): ${message}`);
+    }
+
+    // Initial fetch of notifications
+    fetchAndRenderNotifications();
+
+});
+    </script>
+</body>
 </html>

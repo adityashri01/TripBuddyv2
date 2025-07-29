@@ -330,6 +330,7 @@
                                 <p><i class="fas fa-rupee-sign"></i> Price: ₹{{ "%.2f"|format(ride.price) }} per seat</p>
                                 <p><i class="fas fa-chair"></i> Available Seats: {{ ride.seats }}</p>
                                 <p><i class="fas fa-user"></i> Offered by: {{ ride.creator.username }}</p>
+                                <p><i class="fas fa-phone"></i> Contact Provider: {{ ride.creator.phone_number }}</p>
                                 <div class="ride-actions">
                                     <form action="{{ url_for('book_ride', ride_id=ride.id) }}" method="POST" style="display: flex; gap: 10px; align-items: center;">
                                         <label for="seats-{{ ride.id }}">Seats:</label>
@@ -359,7 +360,7 @@
             </div>
             <div class="footer-contact-group">
                 <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-envelope"></i> Email: tripbuddy898@gmail.com</p>
                 <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
                 <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
             </div>

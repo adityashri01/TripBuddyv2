@@ -816,7 +816,7 @@
         <div class="contact-section-wrapper">
             <div class="contact-form-column">
                 <h2>Contact Us</h2>
-                <form class="contact-form" id="contactForm">
+                <form class="contact-form" id="contactForm" method="POST" action="{{ url_for('send_contact_message') }}">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" placeholder="Your Name" required>
 
@@ -841,7 +841,7 @@
                 <ul class="contact-info-list">
                     <li><i class="fas fa-map-marker-alt"></i>123, Lona, Delhi, India</li>
                     <li><i class="fas fa-phone"></i>+91-98765XXXXX</li>
-                    <li><i class="fas fa-envelope"></i>support@tripbuddy.com</li>
+                    <li><i class="fas fa-envelope"></i>tripbuddy898@gmail.com</li>
                     <li><i class="fas fa-clock"></i>Mon–Fri, 10:00 AM–7:00 PM IST</li>
                 </ul>
                 <div class="social-icons">
@@ -858,14 +858,13 @@
             <div class="footer-links-group">
                 <h4>Quick Links</h4>
                 <a href="{{ url_for('home') }}">Home</a>
-                <!-- <a href="#">How It Works</a> -->
                 <a href="{{ url_for('about') }}">About Us</a>
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
             </div>
             <div class="footer-contact-group">
                 <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-envelope"></i> Email: tripbuddy898@gmail.com</p>
                 <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
                 <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
             </div>
@@ -892,21 +891,25 @@
     <script>
         // JavaScript for the contact form submission message
         document.getElementById('contactForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+            // The form will now submit to the Flask route, so we can remove the preventDefault()
+            // However, we still want to show the client-side message immediately.
 
             const messageBox = document.getElementById('submissionMessage');
             messageBox.classList.add('show'); // Show the message
 
-            // Clear the form fields (optional, but good for user experience)
-            document.getElementById('name').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('subject').value = '';
-            document.getElementById('message').value = '';
-
-            // Hide the message after 5 seconds
+            // Clear the form fields after a short delay (optional, but good for user experience)
+            // This is done BEFORE the actual form submission, so the data is captured by Flask
             setTimeout(function() {
-                messageBox.classList.remove('show');
-            }, 5000);
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('subject').value = '';
+                document.getElementById('message').value = '';
+                // Hide the message after a longer delay, or after the page reloads (if you redirect)
+                // For simplicity, we'll keep the 5-second timeout here.
+                setTimeout(function() {
+                    messageBox.classList.remove('show');
+                }, 4000); // Hide after 4 seconds (total 5 seconds from initial show)
+            }, 1000); // Clear fields after 1 second
         });
 
         // JavaScript for profile dropdown functionality (added for contact.html)

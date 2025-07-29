@@ -29,6 +29,7 @@
                                 <div class="profile-info">
                                     <p><strong>{{ current_user.username }}</strong></p>
                                     <p class="email">{{ current_user.email }}</p>
+                                    <p class="phone">Phone: {{ current_user.phone_number }}</p>
                                     <p class="role">Role: {{ current_user.role }}</p>
                                 </div>
                                 <a href="{{ url_for('logout') }}" class="dropdown-logout-btn">Logout <i class="fas fa-sign-out-alt"></i></a>
@@ -129,7 +130,7 @@
             </div>
             <div class="footer-contact-group">
                 <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> Email: support@tripbuddy.com</p>
+                <p><i class="fas fa-envelope"></i> Email: tripbuddy898@gmail.com</p>
                 <p><i class="fas fa-phone"></i> Phone: +91-98765XXXXX</p>
                 <p><i class="fas fa-map-marker-alt"></i> Address: 123,Lona,Delhi, India</p>
             </div>

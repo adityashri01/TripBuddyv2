@@ -6,15 +6,75 @@
     <title>Login / Signup | TripBuddy</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/frontpage.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login_signup.css') }}">
+    <style>
+        /* Add a style for the error message */
+        .password-error {
+            color: #dc3545; /* Red color for error */
+            font-size: 0.85em;
+            margin-top: 5px;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+        /* Ensure input groups have relative positioning if needed for absolute children, or just manage flow */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px; /* Adjust spacing as needed */
+        }
+
+        /* Styles for Flask flashed messages */
+        .flash-messages-container {
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .flash-message {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 0.95em;
+            display: inline-block; /* To center it if it's not full width */
+            max-width: 90%;
+            word-wrap: break-word; /* Ensure long messages wrap */
+            opacity: 1; /* Start visible */
+            transition: opacity 0.5s ease-out; /* Smooth transition for fading */
+        }
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-message.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash-message.warning, .flash-message.info { /* Added info for verification messages */
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    </style>
 </head>
 <body>
- 
+
 
     <div class="auth-container">
         <div class="auth-card">
+            {# Flask Flash Messages Display #}
+            <div class="flash-messages-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
             <div class="auth-toggle" id="auth-toggle-container"> {# Added ID for JS access #}
                 <button id="login-toggle" class="active">Login</button>
                 <button id="signup-toggle">Sign Up</button>
@@ -46,12 +106,17 @@
                     <input type="email" name="email" placeholder="Your Email Address" required>
                 </div>
                 <div class="input-group">
+                    <i class="fa-solid fa-phone icon"></i>
+                    <input type="tel" id="signup-phone" name="phone_number" placeholder="Phone Number (e.g., 123-456-7890)" pattern="[0-9]{3}-?[0-9]{3}-?[0-9]{4}" title="Phone number must be in the format 123-456-7890 or 1234567890" required>
+                </div>
+                <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="password" placeholder="Create a Strong Password" required>
+                    <input type="password" name="password" id="signup-password" placeholder="Create a Strong Password" required>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i> {# Re-using lock icon for confirm password #}
-                    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                    <input type="password" name="confirm_password" id="signup-confirm-password" placeholder="Confirm Password" required>
+                    <span id="password-match-error" class="password-error">Passwords do not match!</span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-user-tag"></i> <select name="role" required>
@@ -74,40 +139,82 @@
     </div>
 
     <script>
-        const loginToggle = document.getElementById('login-toggle');
-        const signupToggle = document.getElementById('signup-toggle');
-        const loginForm = document.getElementById('login-form');
-        const signupForm = document.getElementById('signup-form');
-        const authToggleContainer = document.getElementById('auth-toggle-container'); // Get the toggle container
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide flash messages after a few seconds
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.addEventListener('transitionend', () => message.remove());
+                }, 5000); // Hide after 5 seconds (5000 milliseconds)
+            });
 
-        // Function to show login form and hide signup form
-        function showLoginForm() {
-            loginToggle.classList.add('active');
-            signupToggle.classList.remove('active');
-            loginForm.classList.add('active');
-            signupForm.classList.remove('active');
-            authToggleContainer.classList.remove('signup-active'); // Remove class for login
-            // Update URL without reloading to reflect current form state (optional)
-            history.pushState(null, '', '{{ url_for("login") }}'); 
-        }
+            const loginToggle = document.getElementById('login-toggle');
+            const signupToggle = document.getElementById('signup-toggle');
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const authToggleContainer = document.getElementById('auth-toggle-container');
 
-        // Function to show signup form and hide login form
-        function showSignupForm() {
-            signupToggle.classList.add('active');
-            loginToggle.classList.remove('active');
-            signupForm.classList.add('active');
-            loginForm.classList.remove('active');
-            authToggleContainer.classList.add('signup-active'); // Add class for signup
-            // Update URL without reloading to reflect current form state (optional)
-            history.pushState(null, '', '{{ url_for("register") }}');
-        }
+            // New elements for password validation
+            const signupPassword = document.getElementById('signup-password');
+            const signupConfirmPassword = document.getElementById('signup-confirm-password');
+            const passwordMatchError = document.getElementById('password-match-error');
 
-        // Event listeners for toggle buttons
-        loginToggle.addEventListener('click', showLoginForm);
-        signupToggle.addEventListener('click', showSignupForm);
+            // Function to validate passwords
+            function validatePasswords() {
+                if (signupPassword.value !== signupConfirmPassword.value) {
+                    passwordMatchError.style.display = 'block'; // Show error
+                    signupConfirmPassword.setCustomValidity("Passwords do not match!"); // Set custom validity for HTML5 validation
+                } else {
+                    passwordMatchError.style.display = 'none'; // Hide error
+                    signupConfirmPassword.setCustomValidity(""); // Clear custom validity
+                }
+            }
 
-        // Determine which form to show based on the initial URL or a hash
-        window.addEventListener('DOMContentLoaded', () => {
+            // Add event listeners to password fields
+            signupPassword.addEventListener('keyup', validatePasswords);
+            signupConfirmPassword.addEventListener('keyup', validatePasswords);
+
+            // Add event listener to the signup form to prevent submission if passwords don't match
+            signupForm.addEventListener('submit', function(event) {
+                validatePasswords(); // Run validation one last time before submission
+                if (signupConfirmPassword.validationMessage) { // Check if custom validity message is set
+                    event.preventDefault(); // Prevent form submission
+                    // Optionally, you can also flash a message here, but the span is more immediate
+                }
+            });
+
+            // Function to show login form and hide signup form
+            function showLoginForm() {
+                loginToggle.classList.add('active');
+                signupToggle.classList.remove('active');
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                authToggleContainer.classList.remove('signup-active');
+                // Update URL to /login when login form is shown
+                if (window.location.pathname !== '{{ url_for("login") }}') {
+                    history.pushState(null, '', '{{ url_for("login") }}');
+                }
+            }
+
+            // Function to show signup form and hide login form
+            function showSignupForm() {
+                signupToggle.classList.add('active');
+                loginToggle.classList.remove('active');
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                authToggleContainer.classList.add('signup-active');
+                // Update URL to /register when signup form is shown
+                if (window.location.pathname !== '{{ url_for("register") }}') {
+                    history.pushState(null, '', '{{ url_for("register") }}');
+                }
+            }
+
+            // Event listeners for toggle buttons
+            loginToggle.addEventListener('click', showLoginForm);
+            signupToggle.addEventListener('click', showSignupForm);
+
+            // Determine which form to show based on the initial URL or a hash
             if (window.location.pathname.includes('/register')) {
                 showSignupForm();
             } else {

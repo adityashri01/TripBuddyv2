@@ -26,12 +26,24 @@
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button class="notification-bell" aria-label="Notifications">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <a href="{{ url_for('home') }}" class="logout-btn-header">Home</a>
-                    <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
-                </div>
+    <button class="notification-bell" aria-label="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notification-count">0</span> </button>
+    <div class="notification-dropdown" id="notification-dropdown">
+        <div class="dropdown-header">
+            <h3>Notifications</h3>
+            <span class="mark-all-read" id="mark-all-read">Mark all as read</span>
+        </div>
+        <div class="notification-list" id="notification-list">
+            <p class="no-notifications-message">No new notifications.</p>
+        </div>
+        <div class="dropdown-footer">
+            <a href="#">View All Notifications</a>
+        </div>
+    </div>
+    <a href="{{ url_for('home') }}" class="logout-btn-header">Home</a>
+    <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
+</div>
             </div>
         </div>
     </header>
@@ -71,16 +83,7 @@
             </div>
         </div>
 
-        {# Flash message display block added here #}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages-dashboard">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+        
 
         {% if role.lower() == 'renter' and not can_offer_rides %}
         <div class="provider-cta-section">
@@ -226,6 +229,192 @@
         </div>
         <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
     </footer>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationBell = document.querySelector('.notification-bell');
+            const notificationDropdown = document.getElementById('notification-dropdown');
+            const notificationCountBadge = document.getElementById('notification-count');
+            const notificationList = document.getElementById('notification-list');
+            const markAllReadBtn = document.getElementById('mark-all-read');
+            const noNotificationsMessage = notificationList.querySelector('.no-notifications-message'); // Get the placeholder message
+
+            let notifications = []; // This will now be populated from the backend
+
+            // Helper function to format timestamps
+            function formatTimestamp(isoString) {
+                const date = new Date(isoString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffSeconds = Math.round(diffMs / 1000);
+                const diffMinutes = Math.round(diffSeconds / 60);
+                const diffHours = Math.round(diffMinutes / 60);
+                const diffDays = Math.round(diffHours / 24);
+                const diffMonths = Math.round(diffDays / 30.44); // Average days in a month
+                const diffYears = Math.round(diffDays / 365.25); // Average days in a year
+
+                if (diffSeconds < 60) {
+                    return `${diffSeconds} second${diffSeconds === 1 ? '' : 's'} ago`;
+                } else if (diffMinutes < 60) {
+                    return `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+                } else if (diffHours < 24) {
+                    return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+                } else if (diffDays < 7) {
+                    return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+                } else if (diffMonths < 12) {
+                    return `${diffMonths} month${diffMonths === 1 ? '' : 's'} ago`;
+                } else {
+                    return `${diffYears} year${diffYears === 1 ? '' : 's'} ago`;
+                }
+            }
+
+            // Function to fetch notifications from the backend
+            async function fetchNotifications() {
+                try {
+                    const response = await fetch('/api/notifications');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    notifications = await response.json();
+                    renderNotifications();
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                    // Optionally display an error message to the user
+                    notificationList.innerHTML = '<p class="no-notifications-message" style="color:red;">Failed to load notifications.</p>';
+                    updateNotificationCount(0); // Hide badge on error
+                }
+            }
+
+            // Function to render notifications
+            function renderNotifications() {
+                notificationList.innerHTML = ''; // Clear existing notifications
+                let unreadCount = 0;
+
+                if (notifications.length === 0 || notifications.every(notif => notif.is_read)) {
+                    // Show "No new notifications" only if there are no notifications or all are read
+                    if (noNotificationsMessage) { // Ensure the element exists
+                        notificationList.appendChild(noNotificationsMessage);
+                    } else {
+                        const message = document.createElement('p');
+                        message.classList.add('no-notifications-message');
+                        message.textContent = 'No new notifications.';
+                        notificationList.appendChild(message);
+                    }
+                    updateNotificationCount(0);
+                    return;
+                }
+
+                notifications.forEach(notif => {
+                    if (!notif.is_read) { // Use is_read from backend
+                        unreadCount++;
+                    }
+                    const notificationItem = document.createElement('div');
+                    notificationItem.classList.add('notification-item');
+                    if (!notif.is_read) { // Use is_read for class
+                        notificationItem.classList.add('unread');
+                    }
+                    notificationItem.dataset.id = notif.id; // Store ID for easy access
+
+                    notificationItem.innerHTML = `
+                        <div class="notification-item-header">
+                            <span class="notification-type">${notif.type || 'General'}</span>
+                            <span class="timestamp">${formatTimestamp(notif.timestamp)}</span>
+                        </div>
+                        <div class="notification-item-content">
+                            ${notif.message}
+                        </div>
+                    `;
+                    notificationList.appendChild(notificationItem);
+
+                    // Add click listener to mark as read
+                    notificationItem.addEventListener('click', async function() {
+                        if (!notif.is_read) { // Only try to mark as read if it's currently unread
+                            await markNotificationAsRead(notif.id);
+                        }
+                    });
+                });
+
+                updateNotificationCount(unreadCount);
+            }
+
+            // Function to update the notification count badge
+            function updateNotificationCount(count) {
+                if (count > 0) {
+                    notificationCountBadge.textContent = count;
+                    notificationCountBadge.style.display = 'block';
+                } else {
+                    notificationCountBadge.style.display = 'none';
+                }
+            }
+
+            // Function to mark a single notification as read on the backend
+            async function markNotificationAsRead(id) {
+                try {
+                    const response = await fetch(`/api/notifications/${id}/mark_read`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        const notification = notifications.find(n => n.id === id);
+                        if (notification) {
+                            notification.is_read = true; // Update local state
+                            renderNotifications(); // Re-render to update UI
+                        }
+                    } else {
+                        console.error('Failed to mark notification as read:', await response.text());
+                    }
+                } catch (error) {
+                    console.error('Error marking notification as read:', error);
+                }
+            }
+
+            // Function to mark all notifications as read on the backend
+            markAllReadBtn.addEventListener('click', async function() {
+                try {
+                    const response = await fetch('/api/notifications/mark_all_read', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        notifications.forEach(notif => {
+                            notif.is_read = true; // Update local state
+                        });
+                        renderNotifications();
+                    } else {
+                        console.error('Failed to mark all notifications as read:', await response.text());
+                    }
+                } catch (error) {
+                    console.error('Error marking all notifications as read:', error);
+                }
+            });
+
+            // Toggle dropdown visibility and fetch notifications
+            notificationBell.addEventListener('click', async function(event) {
+                notificationDropdown.classList.toggle('show');
+                if (notificationDropdown.classList.contains('show')) {
+                    await fetchNotifications(); // Fetch and render when dropdown opens
+                }
+                event.stopPropagation();
+            });
+
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function(event) {
+                if (!notificationDropdown.contains(event.target) && !notificationBell.contains(event.target)) {
+                    notificationDropdown.classList.remove('show');
+                }
+            });
+
+            // Initial fetch of notifications when page loads
+            fetchNotifications();
+
+            // Optional: Periodically fetch notifications (e.g., every 60 seconds)
+            // setInterval(fetchNotifications, 60000); // Fetch every minute
+        });
+    </script>
 
     </body>
 </html>

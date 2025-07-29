@@ -218,7 +218,6 @@
     </header>
 
     <main class="post-ride-main">
-    
 
         <div class="post-ride-container">
             {% if not current_user.can_offer_rides %}
@@ -250,6 +249,16 @@
                     <div class="form-group">
                         <label for="seats"><i class="fas fa-chair"></i> Available Seats:</label>
                         <input type="number" id="seats" name="seats" min="1" max="10" placeholder="e.g., 3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date"><i class="fas fa-calendar-alt"></i> Date of Ride:</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time"><i class="fas fa-clock"></i> Time of Ride:</label>
+                        <input type="time" id="time" name="time" required>
                     </div>
 
                     <button type="submit" class="btn btn-primary post-ride-btn">Post Ride <i class="fas fa-arrow-right"></i></button>

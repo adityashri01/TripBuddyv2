@@ -1,6 +1,7 @@
 # models.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from datetime import datetime # Import datetime for timestamps
 
 db = SQLAlchemy()
 
@@ -15,17 +16,52 @@ class User(UserMixin, db.Model):
     # New fields for activation
     can_offer_rides = db.Column(db.Boolean, default=False, nullable=False)
     can_find_rides = db.Column(db.Boolean, default=False, nullable=False)
+    # Add relationship to notifications received by this user
+    received_notifications = db.relationship('Notification', backref='recipient', lazy=True, foreign_keys='Notification.user_id')
+
 
     def __repr__(self):
         return f'<User {self.username}>'
 
 class Ride(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     start_location = db.Column(db.String(100), nullable=False)
     end_location = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    seats = db.Column(db.Integer, nullable=False) # Represents available seats
-    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    seats = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    time = db.Column(db.String(20), nullable=False) # Store time as string (e.g., "10:00 AM")
+    description = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
-        return f'<Ride {self.start_location} to {self.end_location} ({self.seats} seats available)>'
+        return f'<Ride {self.id} from {self.start_location} to {self.end_location}>'
+
+# NEW MODEL: Notification
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # The user who receives the notification
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True) # Optional: User who triggered the notification
+    message = db.Column(db.String(500), nullable=False)
+    type = db.Column(db.String(50), nullable=True) # e.g., 'ride_booked', 'message', 'ride_cancelled'
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # You might want to add a reference to a related object, e.g., ride_id
+    ride_id = db.Column(db.Integer, db.ForeignKey('ride.id'), nullable=True)
+    ride = db.relationship('Ride', backref='notifications', lazy=True) # Back-reference to the ride
+
+    def __repr__(self):
+        return f'<Notification {self.id} for User {self.user_id}: {self.message[:30]}...>'
+
+    def to_dict(self):
+        """Converts the notification object to a dictionary for JSON serialization."""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'sender_id': self.sender_id,
+            'message': self.message,
+            'type': self.type,
+            'is_read': self.is_read,
+            'timestamp': self.timestamp.isoformat() + 'Z', # ISO format for JS compatibility
+            'ride_id': self.ride_id
+        }

@@ -76,19 +76,158 @@
     gap: 20px; /* Spacing between bell and logout button */
 }
 
+/* Styles for the Notification Bell and Badge */
 .notification-bell {
     background: none;
     border: none;
-    color: var(--text-dark); /* Dark color for bell icon */
-    font-size: 1.5em;
+    font-size: 1.5rem;
+    color: var(--text-color-light); /* Or adjust to your preference */
     cursor: pointer;
-    transition: color 0.3s ease, transform 0.2s ease;
-    padding: 5px; /* Add some padding for easier clicking */
+    position: relative; /* For positioning the badge */
+    margin-right: 20px;
+    padding: 5px;
+    transition: color 0.3s ease;
 }
 
 .notification-bell:hover {
+    color: var(--primary-color); /* Or a highlight color */
+}
+
+.notification-badge {
+    position: absolute;
+    top: 0px; /* Adjust as needed */
+    right: -5px; /* Adjust as needed */
+    background-color: var(--danger-color); /* Red color for notifications */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 3px 6px;
+    min-width: 10px;
+    text-align: center;
+    line-height: 1;
+    display: none; /* Hidden by default, shown with JavaScript when count > 0 */
+}
+
+/* Styles for the Notification Dropdown */
+.notification-dropdown {
+    position: absolute;
+    top: 60px; /* Adjust based on your header height */
+    right: 20px; /* Align with the bell icon */
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 300px; /* Adjust as needed */
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none; /* Hidden by default, shown with JavaScript */
+    padding: 15px;
+}
+
+.notification-dropdown.show {
+    display: block;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color-light);
+    margin-bottom: 10px;
+}
+
+.dropdown-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color-dark);
+}
+
+.mark-all-read {
+    font-size: 0.85rem;
     color: var(--primary-color);
-    transform: scale(1.1);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.mark-all-read:hover {
+    text-decoration: underline;
+}
+
+.notification-list {
+    max-height: 300px; /* Adjust as needed */
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.notification-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color-light);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: var(--hover-bg);
+}
+
+.notification-item.unread {
+    background-color: var(--unread-notification-bg); /* A slightly different background for unread */
+    font-weight: 600;
+}
+
+.notification-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.notification-item-header .timestamp {
+    font-size: 0.75rem;
+    color: var(--text-color-light);
+}
+
+.notification-item-header .notification-type {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--primary-color); /* Or another accent color */
+}
+
+.notification-item-content {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+.no-notifications-message {
+    text-align: center;
+    color: var(--text-color-light);
+    padding: 20px;
+    font-style: italic;
+}
+
+.dropdown-footer {
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color-light);
+    text-align: center;
+}
+
+.dropdown-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.dropdown-footer a:hover {
+    text-decoration: underline;
+  transform: scale(1.1);
 }
 
 .logout-btn-header {

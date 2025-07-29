@@ -1,11 +1,12 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from datetime import datetime
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify 
 from flask_login import (
     LoginManager, login_user, login_required,
     logout_user, current_user
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from models import db, User, Ride
+from models import db, User, Ride, Notification 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tripbuddy.db'
@@ -111,6 +112,48 @@ def logout():
     return redirect(url_for('home'))
 
 
+# API to get current user's notifications
+@app.route('/api/notifications', methods=['GET'])
+@login_required
+def get_notifications():
+    # Fetch notifications for the current user, ordered by timestamp descending
+    # and then by read status (unread first)
+    notifications = Notification.query.filter_by(user_id=current_user.id)\
+                                  .order_by(Notification.is_read.asc(), Notification.timestamp.desc())\
+                                  .all()
+    
+    # Convert notifications to a list of dictionaries using the to_dict method
+    notifications_data = [notif.to_dict() for notif in notifications]
+    return jsonify(notifications_data)
+
+# API to mark a notification as read
+@app.route('/api/notifications/<int:notification_id>/mark_read', methods=['POST'])
+@login_required
+def mark_notification_read(notification_id):
+    notification = Notification.query.get(notification_id)
+    if not notification:
+        return jsonify({'message': 'Notification not found'}), 404
+    
+    # Ensure the current user owns this notification
+    if notification.user_id != current_user.id:
+        return jsonify({'message': 'Unauthorized'}), 403
+    
+    notification.is_read = True
+    db.session.commit()
+    return jsonify({'message': 'Notification marked as read', 'notification_id': notification_id})
+
+# API to mark all notifications as read for the current user
+@app.route('/api/notifications/mark_all_read', methods=['POST'])
+@login_required
+def mark_all_notifications_read():
+    notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
+    for notification in notifications:
+        notification.is_read = True
+    db.session.commit()
+    return jsonify({'message': 'All notifications marked as read'})
+
+
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -172,6 +215,20 @@ def post_ride():
         price = float(request.form['price'])
         seats = int(request.form['seats'])
 
+        # You need to add these lines to get date and time from the form
+        ride_date_str = request.form['date']
+        ride_time_str = request.form['time']
+        description = request.form.get('description', '') # Assuming description might be optional
+
+        from datetime import datetime
+        try:
+            # Convert date string to a date object
+            ride_date = datetime.strptime(ride_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+            return redirect(url_for('post_ride'))
+
+
         if seats <= 0:
             flash('Number of seats must be at least 1.', 'danger')
             return redirect(url_for('post_ride'))
@@ -181,6 +238,9 @@ def post_ride():
             end_location=end,
             price=price,
             seats=seats,
+            date=ride_date, # Add date here
+            time=ride_time_str, # Add time here
+            description=description, # Add description here
             creator_id=current_user.id
         )
         db.session.add(new_ride)
@@ -251,7 +311,22 @@ def book_ride(ride_id):
 
     ride.seats -= requested_seats
     current_user.rides_taken += requested_seats
-    db.session.commit()
+    db.session.commit() # Commit the changes to the ride and user first
+
+    # --- NEW: Create a notification for the ride creator ---
+    ride_creator = User.query.get(ride.creator_id)
+    if ride_creator:
+        notification_message = f"Your ride from {ride.start_location} to {ride.end_location} has been booked by {current_user.username} for {requested_seats} seat(s)."
+        new_notification = Notification(
+            user_id=ride_creator.id,
+            sender_id=current_user.id,
+            message=notification_message,
+            type='ride_booked',
+            ride_id=ride.id,
+            timestamp=datetime.utcnow()
+        )
+        db.session.add(new_notification)
+        db.session.commit() # Commit the new notification
 
     flash(f'{requested_seats} seat(s) on the ride from {ride.start_location} to {ride.end_location} booked successfully!', 'success')
     return redirect(url_for('dashboard'))

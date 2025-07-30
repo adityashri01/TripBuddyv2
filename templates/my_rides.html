@@ -7,214 +7,243 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"> {# Reusing dashboard CSS for consistency #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <style>
+        /* Specific styles for my_rides.html */
+        .my-rides-main {
+            padding: 40px 20px;
+            background-color: var(--background-light);
+            min-height: calc(100vh - 100px); /* Adjust based on header/footer */
+        }
+
         .my-rides-container {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            padding: 30px;
+            text-align: center;
         }
 
-        .my-rides-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+        .my-rides-heading {
+            font-family: var(--poppins);
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
-        .my-rides-header h1 {
-            font-size: 2.2em;
-            color: #333;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .my-rides-header h1 i {
-            margin-right: 10px;
-            color: #007bff;
+        .my-rides-subheading {
+            color: var(--text-medium);
+            font-size: 1.1em;
+            margin-bottom: 40px;
         }
 
         .filter-buttons {
             display: flex;
-            gap: 10px;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .filter-buttons .btn {
             padding: 10px 20px;
             border-radius: 25px;
-            text-decoration: none;
             font-weight: 600;
+            text-decoration: none;
             transition: all 0.3s ease;
-            font-size: 0.95em;
-        }
-
-        .filter-buttons .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-            border: 1px solid #007bff;
-        }
-
-        .filter-buttons .btn-secondary {
-            background-color: #f8f9fa;
-            color: #007bff;
-            border: 1px solid #007bff;
-        }
-
-        .filter-buttons .btn-primary:hover,
-        .filter-buttons .btn-secondary:hover {
-            opacity: 0.9;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: transparent;
         }
 
         .filter-buttons .btn.active {
-            background-color: #0056b3;
-            border-color: #0056b3;
-            color: #fff;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-buttons .btn:hover:not(.active) {
+            background-color: rgba(41, 121, 255, 0.1);
+            transform: translateY(-2px);
         }
 
         .rides-list-section {
             margin-top: 30px;
         }
 
-        .ride-category-title {
-            font-size: 1.8em;
-            color: #555;
+        .rides-list-section h2 {
+            font-family: var(--poppins);
+            font-size: 2em;
+            color: var(--text-dark);
             margin-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
+            text-align: left;
+            border-bottom: 2px solid #eee;
             padding-bottom: 10px;
-            display: flex;
-            align-items: center;
         }
 
-        .ride-category-title i {
-            margin-right: 10px;
-            color: #28a745; /* Green for offered rides */
-        }
-        .ride-category-title.rented i {
-            color: #ffc107; /* Orange for rented rides */
+        .rides-grid {
+            display: grid;
+            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         }
 
         .ride-card {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
             border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 20px;
-            margin-bottom: 15px;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative; /* For the type badge */
         }
 
         .ride-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .ride-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .ride-card-header .ride-status {
-            font-size: 0.9em;
+        .ride-type-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
             padding: 5px 10px;
             border-radius: 5px;
-            color: #fff;
+            font-size: 0.8em;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
         }
 
-        .ride-card-header .ride-status.active { background-color: #28a745; } /* Green */
-        .ride-card-header .ride-status.completed { background-color: #6c757d; } /* Gray */
-        .ride-card-header .ride-status.cancelled { background-color: #dc3545; } /* Red */
-        .ride-card-header .ride-status.pending { background-color: #ffc107; } /* Yellow */
-
-        .ride-details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 10px;
+        .ride-type-badge.offered {
+            background-color: var(--primary-color);
         }
 
-        .ride-detail-item {
-            background-color: #eff6ff;
-            padding: 10px 15px;
-            border-radius: 5px;
+        .ride-type-badge.rented {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        .ride-card h3 {
+            font-family: var(--poppins);
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ride-card h3 i {
+            color: var(--primary-color);
+        }
+
+        .ride-card p {
+            color: var(--text-medium);
             font-size: 0.95em;
-            color: #444;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .ride-detail-item i {
-            color: #007bff;
+        .ride-card p i {
+            color: var(--accent-color); /* You might define this in main.css */
+            font-size: 1em;
         }
 
         .ride-actions {
             margin-top: 15px;
             display: flex;
-            gap: 10px;
             justify-content: flex-end;
+            gap: 10px;
         }
 
-        .ride-actions .btn {
+        .btn-detail, .btn-cancel {
             padding: 8px 15px;
             border-radius: 5px;
+            font-weight: 600;
             text-decoration: none;
+            transition: background-color 0.3s ease;
             font-size: 0.9em;
         }
 
-        .no-rides-message {
-            text-align: center;
-            padding: 40px;
-            background-color: #f0f8ff;
-            border: 1px dashed #cce5ff;
-            border-radius: 8px;
-            color: #0056b3;
-            font-size: 1.1em;
-            margin-top: 30px;
-        }
-        .no-rides-message i {
-            margin-right: 10px;
-            color: #007bff;
+        .btn-detail {
+            background-color: #6c757d; /* Grey for info/detail */
+            color: white;
         }
 
-        /* Basic responsiveness */
+        .btn-detail:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545; /* Red for cancel */
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+
+        .no-rides-message {
+            color: var(--text-medium);
+            font-size: 1.1em;
+            margin-top: 50px;
+            padding: 20px;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .no-rides-message i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .my-rides-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+            .my-rides-heading {
+                font-size: 2em;
+            }
+            .my-rides-subheading {
+                font-size: 1em;
             }
             .filter-buttons {
-                width: 100%;
-                justify-content: stretch;
+                flex-direction: column;
+                gap: 10px;
             }
             .filter-buttons .btn {
-                flex-grow: 1;
-                text-align: center;
+                width: 100%;
             }
-            .ride-details-grid {
-                grid-template-columns: 1fr;
+            .rides-grid {
+                grid-template-columns: 1fr; /* Stack cards on small screens */
             }
-            .ride-actions {
-                flex-direction: column;
-                gap: 5px;
+            .ride-card {
+                padding: 15px;
+            }
+            .ride-card h3 {
+                font-size: 1.2em;
+            }
+            .ride-card p {
+                font-size: 0.9em;
+            }
+            .ride-type-badge {
+                top: 10px;
+                right: 10px;
+                padding: 3px 8px;
+                font-size: 0.7em;
             }
         }
     </style>
 </head>
 <body>
-
     <header class="dashboard-header">
         <div class="header-container">
             <div class="logo">
@@ -223,8 +252,9 @@
             <div class="header-right-section">
                 <nav class="dashboard-nav-header">
                     <ul>
-                        <li><a href="{{ url_for('find_rides') }}">Find Rides</a></li>
-                        <li><a href="{{ url_for('post_ride') }}">Post Ride</a></li>
+                        <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link"{% endif %}>Find Rides</a></li>
+                        <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link"{% endif %}>Post Ride</a></li>
+                        <li><a href="{{ url_for('my_rides') }}" class="active">My Rides</a></li> {# Added My Rides link #}
                     </ul>
                 </nav>
                 <div class="header-actions">
@@ -251,71 +281,73 @@
         </div>
     </header>
 
-    <main>
+    <main class="my-rides-main">
         <div class="my-rides-container">
-            <div class="my-rides-header">
-                <h1><i class="fas fa-history"></i> My Ride History</h1>
-                <div class="filter-buttons">
-                    <a href="{{ url_for('my_rides', filter='all') }}" class="btn {% if filter == 'all' %}btn-primary active{% else %}btn-secondary{% endif %}">All Rides</a>
-                    <a href="{{ url_for('my_rides', filter='offered') }}" class="btn {% if filter == 'offered' %}btn-primary active{% else %}btn-secondary{% endif %}">Offered Rides</a>
-                    <a href="{{ url_for('my_rides', filter='rented') }}" class="btn {% if filter == 'rented' %}btn-primary active{% else %}btn-secondary{% endif %}">Rented Rides</a>
-                </div>
+            <h1 class="my-rides-heading">My Rides</h1>
+            <p class="my-rides-subheading">View and manage your offered and rented rides.</p>
+
+            <div class="filter-buttons">
+                <a href="{{ url_for('my_rides', filter='all') }}" class="btn {% if filter_type == 'all' %}active{% endif %}">All Rides</a>
+                <a href="{{ url_for('my_rides', filter='offered') }}" class="btn {% if filter_type == 'offered' %}active{% endif %}">Offered Rides</a>
+                <a href="{{ url_for('my_rides', filter='rented') }}" class="btn {% if filter_type == 'rented' %}active{% endif %}">Rented Rides</a>
             </div>
 
-            <section class="rides-list-section">
-                {% if offered_rides or rented_rides %}
-                    {% if offered_rides and (filter == 'all' or filter == 'offered') %}
-                        <h2 class="ride-category-title"><i class="fas fa-car-side"></i> Your Offered Rides</h2>
-                        {% for ride in offered_rides %}
-                            <div class="ride-card">
-                                <div class="ride-card-header">
-                                    <span>{{ ride.start_location }} to {{ ride.end_location }}</span>
-                                    <span class="ride-status {{ ride.status_class }}">{{ ride.status }}</span>
+            {% if (filter_type == 'all' or filter_type == 'offered') %}
+                <section class="rides-list-section">
+                    <h2>Your Offered Rides</h2>
+                    {% if offered_rides %}
+                        <div class="rides-grid">
+                            {% for ride in offered_rides %}
+                                <div class="ride-card">
+                                    <span class="ride-type-badge offered">Offered</span>
+                                    <h3><i class="fas fa-map-marker-alt"></i> {{ ride.start_location }} to {{ ride.end_location }}</h3>
+                                    <p><i class="fas fa-calendar-alt"></i> Date: {{ ride.date.strftime('%Y-%m-%d') }}</p>
+                                    <p><i class="fas fa-clock"></i> Time: {{ ride.time }}</p>
+                                    <p><i class="fas fa-rupee-sign"></i> Price: ₹{{ "%.2f"|format(ride.price) }} per seat</p>
+                                    <p><i class="fas fa-chair"></i> Available Seats: {{ ride.seats }}</p>
+                                    {% if ride.description %}<p><i class="fas fa-info-circle"></i> Description: {{ ride.description }}</p>{% endif %}
+                                    <div class="ride-actions">
+                                        <a href="#" class="btn-detail">Details</a>
+                                        <a href="#" class="btn-cancel">Cancel Ride</a>
+                                    </div>
                                 </div>
-                                <div class="ride-details-grid">
-                                    <div class="ride-detail-item"><i class="fas fa-calendar-alt"></i> {{ ride.date.strftime('%Y-%m-%d') }}</div>
-                                    <div class="ride-detail-item"><i class="fas fa-clock"></i> {{ ride.time }}</div>
-                                    <div class="ride-detail-item"><i class="fas fa-users"></i> Seats: {{ ride.seats_available }} / {{ ride.total_seats }}</div>
-                                    <div class="ride-detail-item"><i class="fas fa-tag"></i> Price: ₹{{ "%.2f"|format(ride.price) }}</div>
-                                </div>
-                                <div class="ride-actions">
-                                    <a href="{{ url_for('edit_ride', ride_id=ride.id) }}" class="btn btn-info">Edit</a>
-                                    <a href="{{ url_for('cancel_ride', ride_id=ride.id) }}" class="btn btn-danger">Cancel</a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% elif filter == 'offered' %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
                         <p class="no-rides-message"><i class="fas fa-info-circle"></i> You have not offered any rides yet.</p>
                     {% endif %}
+                </section>
+            {% endif %}
 
-                    {% if rented_rides and (filter == 'all' or filter == 'rented') %}
-                        <h2 class="ride-category-title rented"><i class="fas fa-road"></i> Your Rented Rides</h2>
-                        {% for booking in rented_rides %}
-                            <div class="ride-card">
-                                <div class="ride-card-header">
-                                    <span>{{ booking.ride.start_location }} to {{ booking.ride.end_location }}</span>
-                                    <span class="ride-status {{ booking.status_class }}">{{ booking.status }}</span>
+            {% if (filter_type == 'all' or filter_type == 'rented') %}
+                <section class="rides-list-section">
+                    <h2>Your Rented Rides</h2>
+                    {% if rented_bookings %} {# Changed from rented_rides to rented_bookings #}
+                        <div class="rides-grid">
+                            {% for booking in rented_bookings %} {# Iterate over bookings (notifications) #}
+                                {% if booking.ride %} {# Ensure the ride object exists #}
+                                <div class="ride-card">
+                                    <span class="ride-type-badge rented">Rented</span>
+                                    <h3><i class="fas fa-map-marker-alt"></i> {{ booking.ride.start_location }} to {{ booking.ride.end_location }}</h3>
+                                    <p><i class="fas fa-calendar-alt"></i> Date: {{ booking.ride.date.strftime('%Y-%m-%d') }}</p>
+                                    <p><i class="fas fa-clock"></i> Time: {{ booking.ride.time }}</p>
+                                    <p><i class="fas fa-rupee-sign"></i> Price: ₹{{ "%.2f"|format(booking.ride.price) }} per seat</p>
+                                    <p><i class="fas fa-user"></i> Offered by: {{ booking.ride.creator.username }}</p>
+                                    <p><i class="fas fa-info-circle"></i> Booking Info: {{ booking.message }}</p> {# Show the notification message for seats booked #}
+                                    <div class="ride-actions">
+                                        <a href="#" class="btn-detail">Details</a>
+                                        <a href="#" class="btn-cancel">Cancel Booking</a>
+                                    </div>
                                 </div>
-                                <div class="ride-details-grid">
-                                    <div class="ride-detail-item"><i class="fas fa-calendar-alt"></i> {{ booking.ride.date.strftime('%Y-%m-%d') }}</div>
-                                    <div class="ride-detail-item"><i class="fas fa-clock"></i> {{ booking.ride.time }}</div>
-                                    <div class="ride-detail-item"><i class="fas fa-user"></i> Driver: {{ booking.ride.driver.username }}</div>
-                                    <div class="ride-detail-item"><i class="fas fa-ticket-alt"></i> Seats Booked: {{ booking.seats_booked }} / {{ booking.ride.seats }}</div>>
-                                    <div class="ride-detail-item"><i class="fas fa-money-bill-wave"></i> Total Paid: ₹{{ "%.2f"|format(booking.total_price) }}</div>
-                                </div>
-                                <div class="ride-actions">
-                                    <a href="{{ url_for('view_booking_details', booking_id=booking.id) }}" class="btn btn-info">View Details</a>
-                                    <a href="{{ url_for('cancel_booking', booking_id=booking.id) }}" class="btn btn-danger">Cancel Booking</a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% elif filter == 'rented' %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
                         <p class="no-rides-message"><i class="fas fa-info-circle"></i> You have not rented any rides yet.</p>
                     {% endif %}
-                {% else %}
-                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> You have no ride history yet. Start by <a href="{{ url_for('find_rides') }}">finding a ride</a> or <a href="{{ url_for('post_ride') }}">offering one</a>!</p>
-                {% endif %}
-            </section>
+                </section>
+            {% endif %}
+
         </div>
     </main>
 
@@ -354,18 +386,19 @@
         </div>
         <p class="footer-copy">&copy; 2025 TripBuddy. All rights reserved.</p>
     </footer>
+
     <script>
+        // JavaScript for notification dropdown functionality (copied from dashboard.html)
         document.addEventListener('DOMContentLoaded', function() {
             const notificationBell = document.querySelector('.notification-bell');
             const notificationDropdown = document.getElementById('notification-dropdown');
             const notificationCountBadge = document.getElementById('notification-count');
             const notificationList = document.getElementById('notification-list');
             const markAllReadBtn = document.getElementById('mark-all-read');
-            const noNotificationsMessage = notificationList.querySelector('.no-notifications-message'); // Get the placeholder message
+            const noNotificationsMessage = notificationList.querySelector('.no-notifications-message');
 
-            let notifications = []; // This will now be populated from the backend
+            let notifications = [];
 
-            // Helper function to format timestamps
             function formatTimestamp(isoString) {
                 const date = new Date(isoString);
                 const now = new Date();
@@ -374,8 +407,8 @@
                 const diffMinutes = Math.round(diffSeconds / 60);
                 const diffHours = Math.round(diffMinutes / 60);
                 const diffDays = Math.round(diffHours / 24);
-                const diffMonths = Math.round(diffDays / 30.44); // Average days in a month
-                const diffYears = Math.round(diffDays / 365.25); // Average days in a year
+                const diffMonths = Math.round(diffDays / 30.44);
+                const diffYears = Math.round(diffDays / 365.25);
 
                 if (diffSeconds < 60) {
                     return `${diffSeconds} second${diffSeconds === 1 ? '' : 's'} ago`;
@@ -392,7 +425,6 @@
                 }
             }
 
-            // Function to fetch notifications from the backend
             async function fetchNotifications() {
                 try {
                     const response = await fetch('/api/notifications');
@@ -403,21 +435,18 @@
                     renderNotifications();
                 } catch (error) {
                     console.error('Error fetching notifications:', error);
-                    // Optionally display an error message to the user
                     notificationList.innerHTML = '<p class="no-notifications-message" style="color:red;">Failed to load notifications.</p>';
-                    updateNotificationCount(0); // Hide badge on error
+                    updateNotificationCount(0);
                 }
             }
 
-            // Function to render notifications
             function renderNotifications() {
-                notificationList.innerHTML = ''; // Clear existing notifications
+                notificationList.innerHTML = '';
                 let unreadCount = 0;
 
                 if (notifications.length === 0 || notifications.every(notif => notif.is_read)) {
-                    // Show "No new notifications" only if there are no notifications or all are read
-                    if (noNotificationsMessage) { // Ensure the element exists
-                        notificationList.appendChild(noNotificationsMessage);
+                    if (noNotificationsMessage) {
+                        notificationList.appendChild(noNotificationsMessage.cloneNode(true));
                     } else {
                         const message = document.createElement('p');
                         message.classList.add('no-notifications-message');
@@ -429,15 +458,15 @@
                 }
 
                 notifications.forEach(notif => {
-                    if (!notif.is_read) { // Use is_read from backend
+                    if (!notif.is_read) {
                         unreadCount++;
                     }
                     const notificationItem = document.createElement('div');
                     notificationItem.classList.add('notification-item');
-                    if (!notif.is_read) { // Use is_read for class
+                    if (!notif.is_read) {
                         notificationItem.classList.add('unread');
                     }
-                    notificationItem.dataset.id = notif.id; // Store ID for easy access
+                    notificationItem.dataset.id = notif.id;
 
                     notificationItem.innerHTML = `
                         <div class="notification-item-header">
@@ -450,9 +479,8 @@
                     `;
                     notificationList.appendChild(notificationItem);
 
-                    // Add click listener to mark as read
                     notificationItem.addEventListener('click', async function() {
-                        if (!notif.is_read) { // Only try to mark as read if it's currently unread
+                        if (!notif.is_read) {
                             await markNotificationAsRead(notif.id);
                         }
                     });
@@ -461,7 +489,6 @@
                 updateNotificationCount(unreadCount);
             }
 
-            // Function to update the notification count badge
             function updateNotificationCount(count) {
                 if (count > 0) {
                     notificationCountBadge.textContent = count;
@@ -471,7 +498,6 @@
                 }
             }
 
-            // Function to mark a single notification as read on the backend
             async function markNotificationAsRead(id) {
                 try {
                     const response = await fetch(`/api/notifications/${id}/mark_read`, {
@@ -483,8 +509,8 @@
                     if (response.ok) {
                         const notification = notifications.find(n => n.id === id);
                         if (notification) {
-                            notification.is_read = true; // Update local state
-                            renderNotifications(); // Re-render to update UI
+                            notification.is_read = true;
+                            renderNotifications();
                         }
                     } else {
                         console.error('Failed to mark notification as read:', await response.text());
@@ -494,7 +520,6 @@
                 }
             }
 
-            // Function to mark all notifications as read on the backend
             markAllReadBtn.addEventListener('click', async function() {
                 try {
                     const response = await fetch('/api/notifications/mark_all_read', {
@@ -505,7 +530,7 @@
                     });
                     if (response.ok) {
                         notifications.forEach(notif => {
-                            notif.is_read = true; // Update local state
+                            notif.is_read = true;
                         });
                         renderNotifications();
                     } else {
@@ -516,27 +541,21 @@
                 }
             });
 
-            // Toggle dropdown visibility and fetch notifications
             notificationBell.addEventListener('click', async function(event) {
                 notificationDropdown.classList.toggle('show');
                 if (notificationDropdown.classList.contains('show')) {
-                    await fetchNotifications(); // Fetch and render when dropdown opens
+                    await fetchNotifications();
                 }
                 event.stopPropagation();
             });
 
-            // Close dropdown if clicked outside
             document.addEventListener('click', function(event) {
                 if (!notificationDropdown.contains(event.target) && !notificationBell.contains(event.target)) {
                     notificationDropdown.classList.remove('show');
                 }
             });
 
-            // Initial fetch of notifications when page loads
             fetchNotifications();
-
-            // Optional: Periodically fetch notifications (e.g., every 60 seconds)
-            // setInterval(fetchNotifications, 60000); // Fetch every minute
         });
     </script>
 </body>

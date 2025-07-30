@@ -1,13 +1,13 @@
 from datetime import datetime
-from sqlalchemy import func
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify 
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import (
     LoginManager, login_user, login_required,
     logout_user, current_user
 )
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import joinedload # Import joinedload for eager loading
 
-from models import db, User, Ride, Notification, Booking
+from models import db, User, Ride, Notification
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tripbuddy.db'
@@ -122,7 +122,7 @@ def get_notifications():
     notifications = Notification.query.filter_by(user_id=current_user.id)\
                                   .order_by(Notification.is_read.asc(), Notification.timestamp.desc())\
                                   .all()
-    
+
     # Convert notifications to a list of dictionaries using the to_dict method
     notifications_data = [notif.to_dict() for notif in notifications]
     return jsonify(notifications_data)
@@ -134,11 +134,11 @@ def mark_notification_read(notification_id):
     notification = Notification.query.get(notification_id)
     if not notification:
         return jsonify({'message': 'Notification not found'}), 404
-    
+
     # Ensure the current user owns this notification
     if notification.user_id != current_user.id:
         return jsonify({'message': 'Unauthorized'}), 403
-    
+
     notification.is_read = True
     db.session.commit()
     return jsonify({'message': 'Notification marked as read', 'notification_id': notification_id})
@@ -273,7 +273,7 @@ def find_rides():
         rides_query = rides_query.filter(Ride.end_location.ilike(f'%{end_location}%'))
 
     rides = rides_query.all()
-    
+
     return render_template('find_rides.html', rides=rides)
 
 
@@ -333,82 +333,38 @@ def book_ride(ride_id):
     return redirect(url_for('dashboard'))
 
 
-@app.route('/my_rides')
+@app.route('/my_rides', methods=['GET'])
 @login_required
 def my_rides():
-    filter_param = request.args.get('filter', 'all')
+    filter_type = request.args.get('filter', 'all')
 
     offered_rides = []
-    rented_rides = []
+    rented_bookings = [] # Renamed to better reflect it's a list of Notification objects
 
-    print(f"DEBUG: Current user ID: {current_user.id}") # ADD THIS DEBUG LINE
+    # Fetch rides offered by the current user
+    offered_rides_query = Ride.query.filter_by(creator_id=current_user.id).order_by(Ride.date.desc(), Ride.time.asc())
 
-    if filter_param == 'all' or filter_param == 'offered':
-        offered_rides_raw = Ride.query.filter_by(creator_id=current_user.id).order_by(Ride.date.desc(), Ride.time.desc()).all()
-        for ride in offered_rides_raw:
-            booked_seats_sum = db.session.query(func.sum(Booking.seats_booked)).filter(Booking.ride_id == ride.id, Booking.status == 'confirmed').scalar()
-            booked_seats_sum = booked_seats_sum if booked_seats_sum is not None else 0
-            ride.seats_available = ride.seats - booked_seats_sum
-            ride.total_seats = ride.seats
-            if ride.status == 'active':
-                ride.status_class = 'active'
-            elif ride.status == 'completed':
-                ride.status_class = 'completed'
-            elif ride.status == 'cancelled':
-                ride.status_class = 'cancelled'
-            else:
-                ride.status_class = 'pending'
-            offered_rides.append(ride)
-        print(f"DEBUG: Offered rides found: {len(offered_rides)}") # ADD THIS DEBUG LINE
+    # Fetch notifications where the current user is the sender (booker) and the type is 'ride_booked'
+    # Use joinedload to eager-load the associated Ride object to avoid N+1 queries in the template
+    rented_bookings_query = Notification.query.options(joinedload(Notification.ride)).filter(
+        Notification.sender_id == current_user.id,
+        Notification.type == 'ride_booked',
+        Notification.ride_id.isnot(None) # Ensure there's an associated ride
+    ).order_by(Notification.timestamp.desc())
 
 
-    if filter_param == 'all' or filter_param == 'rented':
-        rented_rides = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.booking_date.desc()).all()
-        print(f"DEBUG: Rented rides found: {len(rented_rides)}") # ADD THIS DEBUG LINE
-        for booking in rented_rides:
-            if booking.status == 'confirmed':
-                booking.status_class = 'active'
-            elif booking.status == 'completed':
-                booking.status_class = 'completed'
-            elif booking.status == 'cancelled':
-                booking.status_class = 'cancelled'
-            else:
-                booking.status_class = 'pending'
+    if filter_type == 'offered':
+        offered_rides = offered_rides_query.all()
+    elif filter_type == 'rented':
+        rented_bookings = rented_bookings_query.all()
+    else: # 'all' or no filter
+        offered_rides = offered_rides_query.all()
+        rented_bookings = rented_bookings_query.all()
 
-
-    return render_template(
-        'my_rides.html',
-        offered_rides=offered_rides,
-        rented_rides=rented_rides,
-        filter=filter_param
-    )
-
-# Placeholder routes for ride actions (keep these)
-@app.route('/edit_ride/<int:ride_id>')
-@login_required
-def edit_ride(ride_id):
-    flash(f'Edit ride {ride_id} functionality not yet implemented.', 'info')
-    return redirect(url_for('my_rides'))
-
-@app.route('/cancel_ride/<int:ride_id>')
-@login_required
-def cancel_ride(ride_id):
-    flash(f'Cancel ride {ride_id} functionality not yet implemented.', 'info')
-    return redirect(url_for('my_rides'))
-
-@app.route('/view_booking_details/<int:booking_id>')
-@login_required
-def view_booking_details(booking_id):
-    flash(f'View booking details for {booking_id} functionality not yet implemented.', 'info')
-    return redirect(url_for('my_rides'))
-
-@app.route('/cancel_booking/<int:booking_id>')
-@login_required
-def cancel_booking(booking_id):
-    flash(f'Cancel booking {booking_id} functionality not yet implemented.', 'info')
-    return redirect(url_for('my_rides'))
-
-
+    return render_template('my_rides.html',
+                           offered_rides=offered_rides,
+                           rented_bookings=rented_bookings, # Pass the list of notifications
+                           filter_type=filter_type)
 
 
 if __name__ == "__main__":

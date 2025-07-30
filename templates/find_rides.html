@@ -238,14 +238,6 @@
             cursor: not-allowed;
         }
 
-        .own-ride-note { /* Added for the "This is your ride" message */
-            color: var(--text-medium);
-            font-size: 0.9em;
-            text-align: right;
-            margin-top: 10px;
-            font-style: italic;
-        }
-
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .find-rides-heading {
@@ -299,6 +291,9 @@
                     </ul>
                 </nav>
                 <div class="header-actions">
+                    <!-- <button class="notification-bell" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                    </button> -->
                     <a href="{{ url_for('dashboard') }}" class="logout-btn-header">Dashboard</a>
                     <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
                 </div>
@@ -307,6 +302,7 @@
     </header>
 
     <main class="find-rides-main">
+        
 
         <div class="find-rides-container">
             <h1 class="find-rides-heading">Available Rides</h1>
@@ -321,8 +317,8 @@
             {% else %}
                 {# Search Form #}
                 <form action="{{ url_for('find_rides') }}" method="GET" class="search-rides-form">
-                    {# Changed input names to 'destination' for simpler matching with current app.py logic #}
-                    <input type="text" name="destination" placeholder="Destination (e.g., City, Landmark)" value="{{ request.args.get('destination', '') }}">
+                    <input type="text" name="start_location" placeholder="Starting Location" value="{{ request.args.get('start_location', '') }}">
+                    <input type="text" name="end_location" placeholder="Destination" value="{{ request.args.get('end_location', '') }}">
                     <button type="submit">Search Rides <i class="fas fa-search"></i></button>
                 </form>
 
@@ -330,36 +326,22 @@
                     <div class="rides-list">
                         {% for ride in rides %}
                             <div class="ride-card">
-                                <div class="ride-card-header">
-                                    <h3><i class="fas fa-map-marker-alt"></i> {{ ride.start_location }} to {{ ride.end_location }}</h3>
-                                    <span class="ride-price">₹{{ "%.2f"|format(ride.price) }} / seat</span>
-                                </div>
-                                <div class="ride-details">
-                                    <p><i class="fas fa-calendar-alt"></i> Date: {{ ride.date.strftime('%Y-%m-%d') }}</p>
-                                    <p><i class="fas fa-clock"></i> Time: {{ ride.time }}</p>
-                                    <p><i class="fas fa-users"></i> Available Seats: {{ ride.seats_available }}</p> {# Updated to ride.seats_available #}
-                                    <p><i class="fas fa-user"></i> Driver: {{ ride.driver.username }}</p> {# Changed from ride.creator to ride.driver #}
-                                    {% if ride.description %}
-                                        <p class="ride-description"><i class="fas fa-info-circle"></i> {{ ride.description }}</p>
-                                    {% endif %}
-                                </div>
-                                
-                                {% if current_user.id != ride.creator_id %} {# Conditional rendering for booking form #}
-                                    <form action="{{ url_for('book_ride', ride_id=ride.id) }}" method="POST" class="book-ride-form">
-                                        <div class="form-group">
-                                            <label for="seats-{{ ride.id }}">Seats:</label>
-                                            <input type="number" id="seats-{{ ride.id }}" name="seats_to_book" min="1" max="{{ ride.seats_available }}" value="1" required class="form-control-sm">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-book">Book Now</button>
+                                <h3><i class="fas fa-map-marker-alt"></i> {{ ride.start_location }} to {{ ride.end_location }}</h3>
+                                <p><i class="fas fa-rupee-sign"></i> Price: ₹{{ "%.2f"|format(ride.price) }} per seat</p>
+                                <p><i class="fas fa-chair"></i> Available Seats: {{ ride.seats }}</p>
+                                <p><i class="fas fa-user"></i> Offered by: {{ ride.creator.username }}</p>
+                                <div class="ride-actions">
+                                    <form action="{{ url_for('book_ride', ride_id=ride.id) }}" method="POST" style="display: flex; gap: 10px; align-items: center;">
+                                        <label for="seats-{{ ride.id }}">Seats:</label>
+                                        <input type="number" id="seats-{{ ride.id }}" name="seats_to_book" value="1" min="1" max="{{ ride.seats }}" required>
+                                        <button type="submit" class="btn-book-ride">Book Now</button>
                                     </form>
-                                {% else %}
-                                    <p class="own-ride-note"><i class="fas fa-info-circle"></i> This is your ride.</p>
-                                {% endif %}
+                                </div>
                             </div>
                         {% endfor %}
                     </div>
                 {% else %}
-                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> No rides found matching your criteria. Try a different destination!</p>
+                    <p class="no-rides-message"><i class="fas fa-info-circle"></i> No rides currently available matching your search. Check back later!</p>
                 {% endif %}
             {% endif %}
         </div>

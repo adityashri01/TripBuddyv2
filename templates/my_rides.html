@@ -254,11 +254,11 @@
                     <ul>
                         <li><a href="{{ url_for('find_rides') }}" {% if not current_user.can_find_rides %}class="disabled-link"{% endif %}>Find Rides</a></li>
                         <li><a href="{{ url_for('post_ride') }}" {% if not current_user.can_offer_rides %}class="disabled-link"{% endif %}>Post Ride</a></li>
-                        <li><a href="{{ url_for('my_rides') }}" class="active">My Rides</a></li> {# Added My Rides link #}
+                        <!-- <li><a href="{{ url_for('my_rides') }}" class="active">My Rides</a></li> {# Added My Rides link #} -->
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button class="notification-bell" aria-label="Notifications">
+                    <!-- <button class="notification-bell" aria-label="Notifications">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge" id="notification-count">0</span>
                     </button>
@@ -273,7 +273,7 @@
                         <div class="dropdown-footer">
                             <a href="#">View All Notifications</a>
                         </div>
-                    </div>
+                    </div> -->
                     <a href="{{ url_for('dashboard') }}" class="logout-btn-header">Dashboard</a>
                     <a href="{{ url_for('logout') }}" class="logout-btn-header">Logout</a>
                 </div>

@@ -1,0 +1,9 @@
+Flask
+Flask-Login
+Werkzeug
+Flask-SQLAlchemy
+mysql-connector-python
+Flask-Mail
+Flask-SocketIO
+python-socketio[flask]
+gunicorn

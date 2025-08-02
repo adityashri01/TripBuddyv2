@@ -14,7 +14,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room # Import Socket
 from models import db, User, Ride, Notification
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:1234%40%23Aadi@localhost/tripbuddy'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://urzyqnef0mgmzz6k:5AXtHQ0ZbIviZoGolkSs@bqmkxuw4yjnnkknmifhf-mysql.services.clever-cloud.com:3306/bqmkxuw4yjnnkknmifhf'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_super_secret_key_here_please_change_me'
 

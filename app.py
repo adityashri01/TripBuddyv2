@@ -16,7 +16,7 @@ from models import db, User, Ride, Notification
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://urzyqnef0mgmzz6k:5AXtHQ0ZbIviZoGolkSs@bqmkxuw4yjnnkknmifhf-mysql.services.clever-cloud.com:3306/bqmkxuw4yjnnkknmifhf'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_super_secret_key_here_please_change_me'
+app.config['SECRET_KEY'] = '1ea6b446cc7764cc3ff2d261a0a95550'
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'

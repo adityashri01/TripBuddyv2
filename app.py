@@ -14,18 +14,25 @@ from flask_socketio import SocketIO, emit, join_room, leave_room # Import Socket
 from models import db, User, Ride, Notification
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://urzyqnef0mgmzz6k:5AXtHQ0ZbIviZoGolkSs@bqmkxuw4yjnnkknmifhf-mysql.services.clever-cloud.com:3306/bqmkxuw4yjnnkknmifhf'
+db_user = os.getenv('MYSQL_USER')
+db_password = os.getenv('MYSQL_PASSWORD')
+db_host = os.getenv('MYSQL_HOST')
+db_port = os.getenv('MYSQL_PORT', '3306')  # default to 3306 if not set
+db_name = os.getenv('MYSQL_DATABASE')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = '1ea6b446cc7764cc3ff2d261a0a95550'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key')
+
 
 # Flask-Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'tripbuddy898@gmail.com'
-app.config['MAIL_PASSWORD'] = 'mbwy mapk tlge xhzz'
-app.config['MAIL_DEFAULT_SENDER'] = 'tripbuddy898@gmail.com'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
 
 mail = Mail(app)
 

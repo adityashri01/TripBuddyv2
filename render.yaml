@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: tripbuddy
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn app:app
+    envVars:
+      - key: MYSQL_USER
+        fromDatabase:
+          name: your-db-name
+          property: user
+      - key: MYSQL_PASSWORD
+        fromDatabase:
+          name: your-db-name
+          property: password
+      - key: MYSQL_HOST
+        fromDatabase:
+          name: your-db-name
+          property: host
+      - key: MYSQL_PORT
+        fromDatabase:
+          name: your-db-name
+          property: port
+      - key: MYSQL_DATABASE
+        fromDatabase:
+          name: your-db-name
+          property: database
+      - key: SECRET_KEY
+        value: 1ea6b446cc7764cc3ff2d261a0a95550
+      - key: MAIL_USERNAME
+        value: tripbuddy898@gmail.com
+      - key: MAIL_PASSWORD
+        value: mbwy mapk tlge xhzz
+      - key: MAIL_DEFAULT_SENDER
+        value: tripbuddy898@gmail.com

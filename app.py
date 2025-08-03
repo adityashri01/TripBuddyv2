@@ -42,7 +42,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Initialize SocketIO
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
+
 
 
 @login_manager.user_loader
@@ -556,4 +557,4 @@ def delete_account():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=10000)

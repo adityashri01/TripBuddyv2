@@ -3,7 +3,7 @@ services:
     name: tripbuddy
     env: python
     runtime: python
-    pythonVersion: 3.11.9
+    pythonVersion: 3.10.13
     buildCommand: ""
     startCommand: gunicorn app:app
     envVars:

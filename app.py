@@ -1,6 +1,4 @@
 import os
-import eventlet
-eventlet.monkey_patch()
 from datetime import datetime, timedelta
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import (
@@ -44,7 +42,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Initialize SocketIO
-socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app, async_mode='gevent')
 
 
 

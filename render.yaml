@@ -2,28 +2,30 @@ services:
   - type: web
     name: tripbuddy
     env: python
+    runtime: python
+    pythonVersion: 3.11.9  
     buildCommand: ""
     startCommand: gunicorn app:app
     envVars:
       - key: MYSQL_USER
         fromDatabase:
-          name: your-db-name
+          name: bqmkxuw4yjnnkknmifhf
           property: user
       - key: MYSQL_PASSWORD
         fromDatabase:
-          name: your-db-name
+          name: bqmkxuw4yjnnkknmifhf
           property: password
       - key: MYSQL_HOST
         fromDatabase:
-          name: your-db-name
+          name: bqmkxuw4yjnnkknmifhf
           property: host
       - key: MYSQL_PORT
         fromDatabase:
-          name: your-db-name
+          name: bqmkxuw4yjnnkknmifhf
           property: port
       - key: MYSQL_DATABASE
         fromDatabase:
-          name: your-db-name
+          name: bqmkxuw4yjnnkknmifhf
           property: database
       - key: SECRET_KEY
         value: 1ea6b446cc7764cc3ff2d261a0a95550

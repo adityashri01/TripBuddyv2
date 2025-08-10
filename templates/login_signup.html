@@ -65,15 +65,18 @@
     <div class="auth-container">
         <div class="auth-card">
             {# Flask Flash Messages Display #}
-            <div class="flash-messages-container">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="flash-message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            </div>
+           <div class="flash-messages-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category in ['success', 'danger', 'warning', 'info'] %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
 
             <div class="auth-toggle" id="auth-toggle-container"> {# Added ID for JS access #}
                 <button id="login-toggle" class="active">Login</button>
@@ -95,7 +98,8 @@
                 <a href="#" class="forgot-password">Forgot Password?</a>
             </form>
                                 <!-- Resend verification section -->
-<div id="resend-verification-container" style="display: none; margin-top: 10px;">
+
+<div id="resend-verification-container" style="margin-top: 10px;">
     <p>Didn't receive a verification email? 
         <form method="POST" action="{{ url_for('resend_verification') }}" style="display: inline;">
             <input type="email" name="email" placeholder="Enter your email" required>
@@ -103,6 +107,7 @@
         </form>
     </p>
 </div>
+
 
             <form id="signup-form" class="auth-form" method="POST" action="{{ url_for('register') }}">
                 <h2>Join TripBuddy Today!</h2>
@@ -233,27 +238,19 @@
 
         // Show resend verification link if a certain flash message exists
 document.addEventListener('DOMContentLoaded', function() {
-    const flashMessages = document.querySelectorAll('.flash-message');
-    flashMessages.forEach(msg => {
-        if (msg.textContent.includes('verify your email')) {
-            // Get the email entered in login form
-            const emailInput = document.querySelector('form#login-form input[name="email"]');
-            if (emailInput) {
-                document.getElementById('resend-email').value = emailInput.value;
-            }
-            document.getElementById('resend-verification-container').style.display = 'block';
-        }
-    });
+    const loginEmailInput = document.querySelector('form#login-form input[name="email"]');
+    const resendEmailInput = document.querySelector('#resend-verification-container input[name="email"]');
+    if(loginEmailInput && resendEmailInput) {
+        // Initially set the resend input value to match login email
+        resendEmailInput.value = loginEmailInput.value;
+
+        // Sync values when login email input changes
+        loginEmailInput.addEventListener('input', function() {
+            resendEmailInput.value = loginEmailInput.value;
+        });
+    }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const flashMessages = document.querySelectorAll('.flash-message');
-    flashMessages.forEach(msg => {
-        if (msg.textContent.toLowerCase().includes('verify your email')) {
-            document.getElementById('resend-verification-container').style.display = 'block';
-        }
-    });
-});
 
     </script>
 </body>

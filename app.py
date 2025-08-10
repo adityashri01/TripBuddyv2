@@ -14,15 +14,18 @@ from flask_socketio import SocketIO, emit, join_room, leave_room # Import Socket
 from models import db, User, Ride, Notification
 
 app = Flask(__name__)
-db_user = os.getenv('MYSQL_USER')
-db_password = os.getenv('MYSQL_PASSWORD')
-db_host = os.getenv('MYSQL_HOST')
-db_port = os.getenv('MYSQL_PORT', '3306')  # default to 3306 if not set
-db_name = os.getenv('MYSQL_DATABASE')
+DATABASE_URL = os.getenv('DATABASE_URL')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '1234%40%23Aadi')  # Replace default with your local password or env var
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+if DATABASE_URL is None:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:{DB_PASSWORD}@localhost:5432/tripbuddydb'
+else:
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 
 
 # Flask-Mail Configuration
@@ -30,9 +33,11 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
+
+app.config['MAIL_USERNAME'] = 'tripbuddy898@gmail.com'        # Your Gmail address here
+app.config['MAIL_PASSWORD'] = 'hddj mpod znlj ihmx'     # Gmail app password here
+app.config['MAIL_DEFAULT_SENDER'] = 'tripbuddy898@gmail.com'  # Usually same as MAIL_USERNAME
+
 
 mail = Mail(app)
 
@@ -42,7 +47,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Initialize SocketIO
-socketio = SocketIO(app, async_mode='gevent')
+socketio = SocketIO(app) 
 
 
 
@@ -557,5 +562,4 @@ def delete_account():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    port = int(os.environ.get('PORT', 10000))
-    socketio.run(app, host='0.0.0.0', port=port)
+    socketio.run(app, debug=True)

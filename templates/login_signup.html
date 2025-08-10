@@ -98,11 +98,12 @@
 <div id="resend-verification-container" style="display: none; margin-top: 10px;">
     <p>Didn't receive a verification email? 
         <form method="POST" action="{{ url_for('resend_verification') }}" style="display: inline;">
-            <input type="hidden" name="email" id="resend-email" value="">
+            <input type="email" name="email" placeholder="Enter your email" required>
             <button type="submit" class="btn-link">Resend Verification Email</button>
         </form>
     </p>
 </div>
+
             <form id="signup-form" class="auth-form" method="POST" action="{{ url_for('register') }}">
                 <h2>Join TripBuddy Today!</h2>
                 <div class="input-group">
@@ -244,6 +245,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(msg => {
+        if (msg.textContent.toLowerCase().includes('verify your email')) {
+            document.getElementById('resend-verification-container').style.display = 'block';
+        }
+    });
+});
+
     </script>
 </body>
 </html>

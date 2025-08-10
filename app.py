@@ -232,6 +232,58 @@ def login():
             return render_template('login_signup.html')
     return render_template('login_signup.html')
 
+@app.route('/resend_verification', methods=['POST'])
+def resend_verification():
+    email = request.form.get('email')
+    if not email:
+        flash('Invalid request. Please provide your email.', 'danger')
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('Email address not found.', 'danger')
+        return redirect(url_for('login'))
+
+    if user.is_email_verified:
+        flash('Your email is already verified. Please log in.', 'info')
+        return redirect(url_for('login'))
+
+    # Generate a new verification token and expiry
+    import uuid
+    from datetime import datetime, timedelta
+
+    user.email_verification_token = str(uuid.uuid4())
+    user.email_verification_token_expiration = datetime.utcnow() + timedelta(minutes=5)
+    db.session.commit()
+
+    verification_link = url_for('verify_email', token=user.email_verification_token, _external=True)
+
+    msg = Message(
+        "Verify your TripBuddy account - Resent Verification",
+        recipients=[user.email]
+    )
+    msg.body = f"""
+    Hi {user.username},
+
+    You requested to resend the verification email.
+    Please click the link below to verify your email address. This link expires in 5 minutes:
+
+    {verification_link}
+
+    If you did not request this, please ignore this email.
+
+    Best regards,
+    The TripBuddy Team
+    """
+    try:
+        mail.send(msg)
+        flash('Verification email resent successfully! Please check your inbox.', 'success')
+    except Exception as e:
+        flash(f'Failed to send verification email. Please try again later. Error: {e}', 'danger')
+
+    return redirect(url_for('login'))
+
+
 @app.route('/logout')
 @login_required
 def logout():

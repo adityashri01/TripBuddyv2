@@ -94,7 +94,15 @@
                 <button type="submit" class="btn primary-btn">Log In</button>
                 <a href="#" class="forgot-password">Forgot Password?</a>
             </form>
-
+                                <!-- Resend verification section -->
+<div id="resend-verification-container" style="display: none; margin-top: 10px;">
+    <p>Didn't receive a verification email? 
+        <form method="POST" action="{{ url_for('resend_verification') }}" style="display: inline;">
+            <input type="hidden" name="email" id="resend-email" value="">
+            <button type="submit" class="btn-link">Resend Verification Email</button>
+        </form>
+    </p>
+</div>
             <form id="signup-form" class="auth-form" method="POST" action="{{ url_for('register') }}">
                 <h2>Join TripBuddy Today!</h2>
                 <div class="input-group">
@@ -221,6 +229,21 @@
                 showLoginForm(); // Default to login form
             }
         });
+
+        // Show resend verification link if a certain flash message exists
+document.addEventListener('DOMContentLoaded', function() {
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(msg => {
+        if (msg.textContent.includes('verify your email')) {
+            // Get the email entered in login form
+            const emailInput = document.querySelector('form#login-form input[name="email"]');
+            if (emailInput) {
+                document.getElementById('resend-email').value = emailInput.value;
+            }
+            document.getElementById('resend-verification-container').style.display = 'block';
+        }
+    });
+});
     </script>
 </body>
 </html>

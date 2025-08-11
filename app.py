@@ -610,6 +610,46 @@ def delete_account():
     else:
         flash('Error: Account not found.', 'danger')
         return redirect(url_for('settings')) # Redirect back to settings or dashboard
+    
+@app.route('/verify_document', methods=['GET', 'POST'])
+@login_required
+def verify_document():
+    if request.method == 'POST':
+        # Get uploaded files from the form
+        pan_card = request.files.get('pan_card')
+        aadhaar_card = request.files.get('aadhaar_card')
+        driving_license = request.files.get('driving_license')
+
+        # Simple validation - check if files are uploaded
+        if not pan_card and not aadhaar_card and not driving_license:
+            flash('Please upload at least one document to verify.', 'danger')
+            return redirect(url_for('verify_document'))
+
+        # You can save files to a folder, or process them for verification
+        # For now, let's save uploaded files to 'uploads/' folder with user-specific names
+
+        upload_folder = os.path.join(app.root_path, 'static/uploads', str(current_user.id))
+        os.makedirs(upload_folder, exist_ok=True)
+
+        saved_files = []
+        for doc_file, doc_name in [(pan_card, 'pan_card'), (aadhaar_card, 'aadhaar_card'), (driving_license, 'driving_license')]:
+            if doc_file:
+                filename = f"{doc_name}_{current_user.id}_{uuid.uuid4().hex}{os.path.splitext(doc_file.filename)[1]}"
+                file_path = os.path.join(upload_folder, filename)
+                doc_file.save(file_path)
+                saved_files.append(filename)
+
+        # TODO: Add your document verification logic here (e.g., OCR, external API etc.)
+
+        # For demo, just flash success
+        flash('Documents uploaded successfully! Verification will be processed shortly.', 'success')
+
+        # Optionally, you can save verification status in User model or another DB model
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('verify_document.html')
+
 
 if __name__ == '__main__':
     with app.app_context():

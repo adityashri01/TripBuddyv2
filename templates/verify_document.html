@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Verify Documents - TripBuddy</title>
+    <style>
+        /* Reset & base */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9fafb;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            max-width: 480px;
+            width: 90%;
+            margin: 40px 0;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+            color: #1a73e8;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 18px;
+            color: #555;
+        }
+        input[type="file"] {
+            padding: 10px;
+            border: 1.5px solid #ddd;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+        }
+        input[type="file"]:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        button {
+            margin-top: 30px;
+            padding: 12px 20px;
+            background-color: #1a73e8;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #155ab6;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #1a73e8;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #155ab6;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verify Your Documents</h1>
+       <form method="POST" enctype="multipart/form-data" onsubmit="return showComingSoonMessage()">
+    <label for="pan_card">Upload PAN Card:</label>
+    <input type="file" name="pan_card" id="pan_card" accept=".jpg,.jpeg,.png,.pdf" />
+
+    <label for="aadhaar_card">Upload Aadhaar Card:</label>
+    <input type="file" name="aadhaar_card" id="aadhaar_card" accept=".jpg,.jpeg,.png,.pdf" />
+
+    <label for="driving_license">Upload Driving License:</label>
+    <input type="file" name="driving_license" id="driving_license" accept=".jpg,.jpeg,.png,.pdf" />
+
+    <button type="submit">Submit for Verification</button>
+</form>
+
+        <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+    </div>
+
+    <script>
+    function showComingSoonMessage() {
+        alert("This feature will be activated soon");
+        return false;  // Prevent form submission
+    }
+</script>
+</body>
+</html>

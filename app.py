@@ -10,6 +10,8 @@ from sqlalchemy.orm import joinedload
 import uuid
 from flask_mail import Mail, Message
 from flask_socketio import SocketIO, emit, join_room, leave_room # Import SocketIO, emit, join_room, leave_room
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+
 
 from models import db, User, Ride, Notification
 
@@ -650,6 +652,44 @@ def verify_document():
 
     return render_template('verify_document.html')
 
+# Serializer for creating secure tokens
+serializer = URLSafeTimedSerializer(app.secret_key)
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = serializer.dumps(email, salt='password-reset-salt')
+            reset_url = url_for('reset_password', token=token, _external=True)
+
+            msg = Message('TripBuddy Password Reset', sender=app.config['MAIL_USERNAME'], recipients=[email])
+            msg.body = f'Click the link to reset your password: {reset_url}\nThis link will expire in 1 hour.'
+            mail.send(msg)
+
+        flash('If that email exists, we’ve sent a reset link.', 'info')
+        return redirect(url_for('login'))
+    return render_template('forgot_password.html')
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hour expiry
+    except:
+        flash('The reset link is invalid or has expired.', 'danger')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        hashed_password = generate_password_hash(new_password)
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.password = hashed_password
+            db.session.commit()
+            flash('Your password has been updated! Please log in.', 'success')
+            return redirect(url_for('login'))
+    return render_template('forgot_password.html')
 
 if __name__ == '__main__':
     with app.app_context():

@@ -110,18 +110,20 @@
         {% endif %}
 
         <div class="dashboard-stats-grid">
-            <div class="stat-card">
-                <h3 class="stat-title">Rides Offered</h3>
-                <i class="fas fa-car stat-icon"></i>
-                <p class="stat-value">{{ rides_offered_count | default(0) }}</p>
-                <p class="stat-description">Your active ride offers</p>
-            </div>
-            <div class="stat-card">
-                <h3 class="stat-title">Rides Taken</h3>
-                <i class="fas fa-road stat-icon"></i>
-                <p class="stat-value">{{ rides_taken_count | default(0) }}</p>
-                <p class="stat-description">Seats booked by you</p>
-            </div>
+           <a href="{{ url_for('my_rides', filter='offered') }}" class="stat-card">
+    <h3 class="stat-title">Rides Offered</h3>
+    <i class="fas fa-car stat-icon"></i>
+    <p class="stat-value">{{ rides_offered_count | default(0) }}</p>
+    <p class="stat-description">Your active ride offers</p>
+</a>
+
+<a href="{{ url_for('my_rides', filter='rented') }}" class="stat-card">
+    <h3 class="stat-title">Rides Taken</h3>
+    <i class="fas fa-road stat-icon"></i>
+    <p class="stat-value">{{ rides_taken_count | default(0) }}</p>
+    <p class="stat-description">Seats booked by you</p>
+</a>
+
             <div class="stat-card">
                 <h3 class="stat-title">Average Rating</h3>
                 <i class="fas fa-star stat-icon"></i>
